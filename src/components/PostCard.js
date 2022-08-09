@@ -11,7 +11,7 @@ export default function PostCard(){
     return (
         <Container>
             <PostInfo>
-                <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile picture" />
+                <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
                 <IoIosHeart />
                 <h4>{num} likes</h4>
             </PostInfo>

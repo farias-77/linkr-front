@@ -1,18 +1,20 @@
 import { IoIosArrowDown } from "react-icons/io";
+import UserOption from "./UserOption.js";
 import logo from "../../assets/logo.png";
 import styled from "styled-components";
 import { useState } from "react";
 
 export default function Header(){
-    const [ displayControl, setDisplayControl ] = useState("display: none;");
     
-    function toggleDisplayControl(){
-        if(displayControl === "display: none;"){
-            setDisplayControl("");
+    const [ displayLogoutControl, setDisplayLogoutControl ] = useState("display: none;");
+    const [ searchInput, setSearchInput ] = useState("");
+    
+    function toggleDisplayLogoutControl(){
+        if(displayLogoutControl === "display: none;"){
+            setDisplayLogoutControl("");
         }else{
-            setDisplayControl("display: none;");
+            setDisplayLogoutControl("display: none;");
         }
-        console.log(displayControl)
     }
 
     function exit(){
@@ -23,12 +25,16 @@ export default function Header(){
         <Container>
             <HeaderContainer>
                 <img src={logo} alt="page logo" />
-                <input placeholder="Search for people"></input>
+                <input placeholder="Search for people" onChange={e => setSearchInput(e.target.value)}></input>
                 <Logout>
-                    <IoIosArrowDown onClick={toggleDisplayControl}/>
-                    <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile picture" />
+                    <IoIosArrowDown onClick={toggleDisplayLogoutControl}/>
+                    <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
                 </Logout>
-                <LogoutButton display={displayControl} onClick={exit}><h4>Logout</h4></LogoutButton>
+                <SearchOptions display={searchInput ? "" : "display: none;"}>
+                    <UserOption />
+                    <UserOption />
+                </SearchOptions>
+                <LogoutButton display={displayLogoutControl} onClick={exit}><h4>Logout</h4></LogoutButton>
             </HeaderContainer>
         </Container>
     )
@@ -54,11 +60,13 @@ const HeaderContainer = styled.div`
     justify-content: space-between;
     align-items: center;
 
-    img{
+    > img{
         height: 30px;
     }
 
     input{
+        z-index: 2;
+        
         width: 35%;
         height: 45px;
         background: #FFFFFF;
@@ -71,14 +79,6 @@ const HeaderContainer = styled.div`
             line-height: 23px;
             color: #C6C6C6;
         }
-    }
-
-    h4{
-        font-weight: 700;
-        font-size: 17px;
-        line-height: 20px;
-        letter-spacing: 0.05em;
-        color: #FFFFFF;
     }
 
     background-color: #151515;
@@ -106,10 +106,10 @@ const Logout = styled.div`
 `;
 
 const LogoutButton = styled.div`
+    ${props => props.display};
+    
     width: 7%;
     height: 47px;
-    
-    ${props => props.display};
 
     position: absolute;
     top: 68px;
@@ -125,5 +125,28 @@ const LogoutButton = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
+
+        cursor: pointer;
+
+        font-weight: 700;
+        font-size: 17px;
+        line-height: 20px;
+        letter-spacing: 0.05em;
+        color: #FFFFFF;
     }
+`;
+
+const SearchOptions = styled.div`
+    ${props => props.display};
+
+    position: absolute;
+    top: 48px;
+    right: 33.1%;
+
+    width: 33.8%;
+    
+    background-color: #E7E7E7;
+    border-radius: 8px;
+
+    padding-top: 6px;
 `;
