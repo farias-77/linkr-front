@@ -1,9 +1,20 @@
 import background from "../../assets/background_e7e7e7.png";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 export default function UserOption({user, isUser}){
+    const navigate = useNavigate();
+
+    function redirectUserPage(){
+        if(user.id){
+            navigate("/user/" + user.id);
+            return;
+        }
+        return;
+    }
+    
     return (
-        <Container>
+        <Container onClick={redirectUserPage}>
             {isUser ? <img src={user.profilePicture} alt="profile" /> : <img src={background} alt="empty" />}
             {isUser ? <h4>{user.username}</h4> : <div><h4>Nenhum usuário encontrado...</h4></div>}
         </Container>

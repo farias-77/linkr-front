@@ -1,6 +1,5 @@
 import { DebounceInput } from "react-debounce-input";
 import { IoIosArrowDown } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import UserOption from "./UserOption.js";
 import logo from "../../assets/logo.png";
@@ -12,7 +11,6 @@ export default function Header(){
     const [ displayLogoutControl, setDisplayLogoutControl ] = useState("display: none;");
     const [ searchInput, setSearchInput ] = useState("");
     const [ usersList, setUsersList ] = useState([]);
-    const navigate = useNavigate();
     
     useEffect(() => {
         const url = "https://projeto-17-linkr.herokuapp.com/users";
