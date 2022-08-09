@@ -1,10 +1,11 @@
+import background from "../../assets/background_e7e7e7.png";
 import styled from "styled-components";
 
-export default function UserOption(){
+export default function UserOption({user, isUser}){
     return (
         <Container>
-            <img src="https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2022/01/ARRASCAETA-FLAMENGO-ALEXANDRE-VIDAL-FLAMENGO.jpg" alt="profile" />
-            <h4>Arrascaeta</h4>
+            {isUser ? <img src={user.profilePicture} alt="profile" /> : <img src={background} alt="empty" />}
+            {isUser ? <h4>{user.username}</h4> : <div><h4>Nenhum usuário encontrado...</h4></div>}
         </Container>
     )
 }
@@ -15,16 +16,17 @@ const Container = styled.div`
     display: flex;
     align-items: center;
 
+    padding: 10px 0;
     padding-left: 10px;
-    margin: 10px 0;
+    
+    border-radius: 8px;
+    background-color: #E7E7E7;
 
     img{
         width: 50px;
         height: 50px;
         border-radius: 26.5px;
         object-fit: cover;
-
-        cursor: pointer;
     }
 
     h4{
@@ -34,6 +36,15 @@ const Container = styled.div`
         color: #515151;
 
         margin-left: 10px;
+        
+    }
+
+    &:hover{
         cursor: pointer;
+        background-color: #c1c1c1;
+    }
+
+    > div{
+        margin-left: 7%;
     }
 `;
