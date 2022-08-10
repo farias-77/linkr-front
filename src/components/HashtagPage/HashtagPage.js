@@ -9,7 +9,7 @@ export default function HashtagPage(){
     const [ hashtagPosts, setHashtagPosts ] = useState();
 
     useEffect(() => {
-        const url = `http://localhost:5000/hashtag/${hashtag}`;
+        const url = `https://projeto-17-linkr.herokuapp.com/${hashtag}`;
         const promise = axios.get(url);
 
         promise.then((res) => {
