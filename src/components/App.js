@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./Header/Header.js";
 import { useState } from "react";
-import SignUp from "./SignUpPage/signUpPage.js";
+import SignUp from "./SignUpPage/SignUpPage.js";
+import SignIn from "./SignInPage/SignInPage.js";
 import UserContext from "../contexts/UserContext.js";
 
 export default function App(){
@@ -11,8 +11,8 @@ export default function App(){
     return(
         <BrowserRouter>
             <UserContext.Provider value={{ user, setUser }}>
-                <Header />
                 <Routes>
+                    <Route path="/" element={<SignIn/>} />
                     <Route path="/signup" element={<SignUp/>} />
                 </Routes>
             </UserContext.Provider>            
