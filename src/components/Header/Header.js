@@ -12,10 +12,14 @@ export default function Header(){
     const [ searchInput, setSearchInput ] = useState("");
     const [ usersList, setUsersList ] = useState([]);
     
-    useEffect(() => {
-        const url = "https://projeto-17-linkr.herokuapp.com/users";
-        const promise = axios.get(url);
+    useEffect(() => {       
+        if(!searchInput){
+            setUsersList([]);
+            return;
+        }
 
+        const url = `https://projeto-17-linkr.herokuapp.com/users/${searchInput}`;
+        const promise = axios.get(url);
         promise.then((res) => {
             setUsersList(res.data);
         });
@@ -24,7 +28,7 @@ export default function Header(){
             console.log("Algo deu errado, por favor tente novamente.");
         })
 
-    }, []);
+    }, [searchInput]);
 
     function toggleDisplayLogoutControl(){
         if(displayLogoutControl === "display: none;"){
@@ -38,10 +42,8 @@ export default function Header(){
         //função para deslogar
     }
 
-    function renderSearchOptions(){
-        const usersBySearch = usersList.filter(user => user.username.startsWith(`${searchInput}`));
-
-        return (usersBySearch.length > 0 ? usersBySearch.map((user, index) => {return <UserOption key={index} user={user} isUser={true}/>}) : <UserOption isUser={false} />)
+    function renderSearchOptions(){    
+        return usersList.map((user, index) => {return <UserOption key={index} user={user}/>})
     }
 
     return (
@@ -54,7 +56,7 @@ export default function Header(){
                     <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
                 </Logout>
                 <SearchOptions display={searchInput ? "" : "display: none;"}>
-                    { usersList.length > 0? renderSearchOptions() : <UserOption isUser={false} />}
+                    { usersList.length > 0 ? renderSearchOptions() : <></>}
                 </SearchOptions>
                 <LogoutButton display={displayLogoutControl} onClick={exit}><h4>Logout</h4></LogoutButton>
             </HeaderContainer>
