@@ -1,14 +1,35 @@
+import { DebounceInput } from "react-debounce-input";
 import { IoIosArrowDown } from "react-icons/io";
+import { useState, useEffect } from "react";
 import UserOption from "./UserOption.js";
 import logo from "../../assets/logo.png";
 import styled from "styled-components";
-import { useState } from "react";
+import axios from "axios";
 
 export default function Header(){
     
     const [ displayLogoutControl, setDisplayLogoutControl ] = useState("display: none;");
     const [ searchInput, setSearchInput ] = useState("");
+    const [ usersList, setUsersList ] = useState([]);
     
+    useEffect(() => {       
+        if(!searchInput){
+            setUsersList([]);
+            return;
+        }
+
+        const url = `https://projeto-17-linkr.herokuapp.com/users/${searchInput}`;
+        const promise = axios.get(url);
+        promise.then((res) => {
+            setUsersList(res.data);
+        });
+
+        promise.catch(() => {
+            console.log("Algo deu errado, por favor tente novamente.");
+        })
+
+    }, [searchInput]);
+
     function toggleDisplayLogoutControl(){
         if(displayLogoutControl === "display: none;"){
             setDisplayLogoutControl("");
@@ -18,21 +39,24 @@ export default function Header(){
     }
 
     function exit(){
-        console.log("Função para deslogar usuário!!!");
+        //função para deslogar
+    }
+
+    function renderSearchOptions(){    
+        return usersList.map((user, index) => {return <UserOption key={index} user={user}/>})
     }
 
     return (
         <Container>
             <HeaderContainer>
                 <img src={logo} alt="page logo" />
-                <input placeholder="Search for people" onChange={e => setSearchInput(e.target.value)}></input>
+                <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
                 <Logout>
                     <IoIosArrowDown onClick={toggleDisplayLogoutControl}/>
                     <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
                 </Logout>
                 <SearchOptions display={searchInput ? "" : "display: none;"}>
-                    <UserOption />
-                    <UserOption />
+                    { usersList.length > 0 ? renderSearchOptions() : <></>}
                 </SearchOptions>
                 <LogoutButton display={displayLogoutControl} onClick={exit}><h4>Logout</h4></LogoutButton>
             </HeaderContainer>
@@ -44,7 +68,6 @@ const Container = styled.div`
     position: fixed;
     top: 0;
     left: 0;
-
     width: 100%;
 `;
 
@@ -144,8 +167,6 @@ const SearchOptions = styled.div`
     right: 33.1%;
 
     width: 33.8%;
-    
-    background-color: #E7E7E7;
     border-radius: 8px;
 
     padding-top: 6px;

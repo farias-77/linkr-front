@@ -1,39 +1,39 @@
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import PostCard from "../PostCard.js";
+import RealDataPostCard from "../RealDataPostCard.js";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export default function UserPage(){
-    const { id } = useParams();
-    const [ userPosts, setUserPosts ] = useState();
+export default function HashtagPage(){
+    const { hashtag } = useParams();
+    const [ hashtagPosts, setHashtagPosts ] = useState();
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
+        const url = `https://projeto-17-linkr.herokuapp.com/${hashtag}`;
         const promise = axios.get(url);
 
         promise.then((res) => {
-            setUserPosts(userPosts);
+            setHashtagPosts(res.data);
         });
-        
+
         promise.catch((res) => {
             alert(res.data);
         })
     }, []);
 
+    console.log(hashtagPosts)
     return (
         <Container>
             <UserInfo>
-                <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
-                <h2>Gabriel Barbosa's posts</h2>
+                <h2># {hashtag}</h2>
             </UserInfo>
             <div>
                 <Feed>
-                    <PostCard />
+                    {
+                        hashtagPosts === undefined ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
+                        hashtagPosts.map((value,index)=><RealDataPostCard key={index} username={value.username} profilePicture={value.profilePicture} postText={value.postText} url={value.url}/>)
+                    }
                 </Feed>
-                <Trending>
-
-                </Trending>
             </div>
         </Container>
     )
@@ -57,16 +57,6 @@ const Container = styled.div`
 const Feed = styled.div`
     width: 62%;
     height: 200px;
-`;
-
-const Trending = styled.div`
-    width: 301px;
-    height: 406px;
-    left: 877px;
-    top: 232px;
-
-    background: #171717;
-    border-radius: 16px;
 `;
 
 const UserInfo = styled.div`
