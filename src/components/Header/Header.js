@@ -20,9 +20,15 @@ export default function Header(){
             setUsersList([]);
             return;
         }
-
         const url = `https://projeto-17-linkr.herokuapp.com/users/${searchInput}`;
-        const promise = axios.get(url);
+        const token = localStorage.getItem("token");
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+
+        const promise = axios.get(url, config);
         promise.then((res) => {
             { res.data.length > 0 ? setShowOptions(true) : setShowOptions(false) }
             setUsersList(res.data);

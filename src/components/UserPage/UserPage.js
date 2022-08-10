@@ -10,14 +10,19 @@ export default function UserPage(){
 
     useEffect(() => {
         const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
-        const promise = axios.get(url);
-
+        const token = localStorage.getItem("token");
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
         promise.then((res) => {
-            setUserPosts(userPosts);
+            setUserPosts(res.data);
         });
         
         promise.catch((res) => {
-            alert(res.data);
+            console.log(res.data);
         })
     }, []);
 
