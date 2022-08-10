@@ -1,15 +1,16 @@
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import RealDataPostCard from "../RealDataPostCard.js";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+import RealDataPostCard from "../RealDataPostCard.js";
+
 export default function HashtagPage(){
     const { hashtag } = useParams();
-    const [ hashtagPosts, setHashtagPosts ] = useState();
+    const [ hashtagPosts, setHashtagPosts ] = useState([]);
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/${hashtag}`;
+        const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}`;
         const promise = axios.get(url);
 
         promise.then((res) => {
@@ -19,9 +20,8 @@ export default function HashtagPage(){
         promise.catch((res) => {
             alert(res.data);
         })
-    }, []);
+    }, [hashtag]);
 
-    console.log(hashtagPosts)
     return (
         <Container>
             <UserInfo>
@@ -30,7 +30,7 @@ export default function HashtagPage(){
             <div>
                 <Feed>
                     {
-                        hashtagPosts === undefined ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
+                        (hashtagPosts.length === 0) ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
                         hashtagPosts.map((value,index)=><RealDataPostCard key={index} username={value.username} profilePicture={value.profilePicture} postText={value.postText} url={value.url}/>)
                     }
                 </Feed>
@@ -46,17 +46,20 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    
-    > div:last-child {
-        width: 50%;
-        display: flex;
-        justify-content: space-between;
-    }
 `;
 
 const Feed = styled.div`
     width: 62%;
     height: 200px;
+
+    >p{
+        font-family: 'Oswald', sans-serif;
+        font-weight: 700;
+        font-size: 43px;
+        line-height: 64px;
+        text-align: center;
+        color: #FFFFFF;
+    }
 `;
 
 const UserInfo = styled.div`
