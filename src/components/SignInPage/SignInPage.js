@@ -12,7 +12,7 @@ export default function SignIn() {
         e.preventdefault();
         setDisable(true);
 
-        const promise = axios.post('https://projeto-17-linkr.herokuapp.com/', {
+        const promise = axios.post('https://projeto-17-linkr.herokuapp.com/signin', {
             email: data.email,
             password: data.password
         });
