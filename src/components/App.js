@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import UserPage from "./UserPage/UserPage.js";
+
 import Header from "./Header/Header.js";
+import UserPage from "./UserPage/UserPage.js";
+import HashtagPage from "./HashtagPage/HashtagPage.js";
 
 export default function App(){
     return(
@@ -8,6 +10,7 @@ export default function App(){
             <Header />
             <Routes>
                 <Route path="/user/:id" element={<UserPage />} />
+                <Route path="/hashtag/:hashtag" element={<HashtagPage />} />
             </Routes>
         </BrowserRouter>
     )
