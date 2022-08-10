@@ -1,12 +1,12 @@
-import background from "../../assets/background_e7e7e7.png";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-export default function UserOption({user}){
+export default function UserOption({ user, isLastOption, setShowOptions }){
     const navigate = useNavigate();
 
     function redirectUserPage(){
         if(user.id){
+            setShowOptions(false);
             navigate("/user/" + user.id);
             return;
         }
@@ -14,7 +14,7 @@ export default function UserOption({user}){
     }
     
     return (
-        <Container onClick={redirectUserPage}>
+        <Container onClick={redirectUserPage} border={isLastOption ? "0px 0px 8px 8px" : "0px 0px 0px 0px" }>
             <img src={user.profilePicture} alt="profile" />
             <h4>{user.username}</h4>
         </Container>
@@ -30,7 +30,7 @@ const Container = styled.div`
     padding: 10px 0;
     padding-left: 10px;
     
-    border-radius: 8px;
+    border-radius: ${props => props.border};
     background-color: #E7E7E7;
 
     img{

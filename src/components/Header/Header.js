@@ -1,5 +1,6 @@
 import { DebounceInput } from "react-debounce-input";
 import { IoIosArrowDown } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import UserOption from "./UserOption.js";
 import logo from "../../assets/logo.png";
@@ -11,6 +12,8 @@ export default function Header(){
     const [ displayLogoutControl, setDisplayLogoutControl ] = useState("display: none;");
     const [ searchInput, setSearchInput ] = useState("");
     const [ usersList, setUsersList ] = useState([]);
+    const [ showOptions, setShowOptions ] = useState(false);
+    const navigate = useNavigate();
     
     useEffect(() => {       
         if(!searchInput){
@@ -21,6 +24,7 @@ export default function Header(){
         const url = `https://projeto-17-linkr.herokuapp.com/users/${searchInput}`;
         const promise = axios.get(url);
         promise.then((res) => {
+            { res.data.length > 0 ? setShowOptions(true) : setShowOptions(false) }
             setUsersList(res.data);
         });
 
@@ -38,25 +42,30 @@ export default function Header(){
         }
     }
 
+    function returnHome(){
+        navigate("/");
+        return;
+    }
+
     function exit(){
         //função para deslogar
     }
 
     function renderSearchOptions(){    
-        return usersList.map((user, index) => {return <UserOption key={index} user={user}/>})
+        return usersList.map((user, index) => {return <UserOption key={index} setShowOptions={setShowOptions} user={user} isLastOption={index === usersList.length - 1 ? true : false }/>})
     }
 
     return (
         <Container>
             <HeaderContainer>
-                <img src={logo} alt="page logo" />
+                <img src={logo} alt="page logo" onClick={returnHome} />
                 <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
                 <Logout>
                     <IoIosArrowDown onClick={toggleDisplayLogoutControl}/>
                     <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
                 </Logout>
                 <SearchOptions display={searchInput ? "" : "display: none;"}>
-                    { usersList.length > 0 ? renderSearchOptions() : <></>}
+                    { usersList.length > 0 && showOptions ? renderSearchOptions() : <></>}
                 </SearchOptions>
                 <LogoutButton display={displayLogoutControl} onClick={exit}><h4>Logout</h4></LogoutButton>
             </HeaderContainer>
@@ -85,6 +94,7 @@ const HeaderContainer = styled.div`
 
     > img{
         height: 30px;
+        cursor: pointer;
     }
 
     input{
