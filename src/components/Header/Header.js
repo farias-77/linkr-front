@@ -12,33 +12,33 @@ export default function Header(){
     const [ displayLogoutControl, setDisplayLogoutControl ] = useState("display: none;");
     const [ searchInput, setSearchInput ] = useState("");
     const [ usersList, setUsersList ] = useState([]);
-    const [ showOptions, setShowOptions ] = useState(true);
+    const [ showOptions, setShowOptions ] = useState(false);
     const navigate = useNavigate();
     
-    // useEffect(() => {       
-    //     if(!searchInput){
-    //         setUsersList([]);
-    //         return;
-    //     }
-    //     const url = `https://projeto-17-linkr.herokuapp.com/users/${searchInput}`;
-    //     const token = localStorage.getItem("token");
-    //     const config = {
-    //         headers:{
-    //             "Authorization": `Bearer ${token}`
-    //         }
-    //     }
+    useEffect(() => {       
+        if(!searchInput){
+            setUsersList([]);
+            return;
+        }
+        const url = `https://projeto-17-linkr.herokuapp.com/users/${searchInput}`;
+        const token = localStorage.getItem("token");
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
 
-    //     const promise = axios.get(url, config);
-    //     promise.then((res) => {
-    //         { res.data.length > 0 ? setShowOptions(true) : setShowOptions(false) }
-    //         setUsersList(res.data);
-    //     });
+        const promise = axios.get(url, config);
+        promise.then((res) => {
+            { res.data.length > 0 ? setShowOptions(true) : setShowOptions(false) }
+            setUsersList(res.data);
+        });
 
-    //     promise.catch(() => {
-    //         console.log("Algo deu errado, por favor tente novamente.");
-    //     })
+        promise.catch(() => {
+            console.log("Algo deu errado, por favor tente novamente.");
+        })
 
-    // }, [searchInput]);
+    }, [searchInput]);
 
     function toggleDisplayLogoutControl(){
         if(displayLogoutControl === "display: none;"){
@@ -61,10 +61,6 @@ export default function Header(){
     function renderSearchOptions(){    
         return usersList.map((user, index) => {return <UserOption key={index} setShowOptions={setShowOptions} user={user} isLastOption={index === usersList.length - 1 ? true : false }/>})
     }   
-
-    useEffect(() => {
-        setUsersList([{id: 1, username: "gabriel", profilePicture: ""}])
-    }, [])
 
     return (
         <Container>
