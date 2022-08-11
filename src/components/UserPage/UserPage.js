@@ -1,72 +1,70 @@
+import TrendingHashtags from "../TrendingHashtags.js";
+import RealDataPostCard from "../RealDataPostCard.js";
 import { useParams } from "react-router-dom";
-import styled from "styled-components";
-import PostCard from "../PostCard.js";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import Header from "../Header/Header.js";
+import styled from "styled-components";
+import axios from "axios";
 
 export default function UserPage(){
-    const { id } = useParams();
+    
     const [ userPosts, setUserPosts ] = useState();
+    const { id } = useParams();
 
     useEffect(() => {
         const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
-        const promise = axios.get(url);
-
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
         promise.then((res) => {
-            setUserPosts(userPosts);
+            setUserPosts(res.data);
         });
         
         promise.catch((res) => {
-            alert(res.data);
+            console.log(res.data);
         })
     }, []);
 
     return (
-        <Container>
-            <UserInfo>
-                <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
-                <h2>Gabriel Barbosa's posts</h2>
-            </UserInfo>
-            <div>
-                <Feed>
-                    <PostCard />
-                </Feed>
-                <Trending>
-
-                </Trending>
-            </div>
-        </Container>
+        <>
+            <Header />
+            <Container>
+                <UserInfo>
+                    <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
+                    <h2>Gabriel Barbosa's posts</h2>
+                </UserInfo>
+                <div>
+                    <Feed>
+                        <RealDataPostCard profilePicture={"https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg"} username={"Gabi"} postText={"Guardei dois ontem"} url={"https://en.wikipedia.org/wiki/Gabriel_Barbosa"} />
+                    </Feed>
+                    {/* <TrendingHashtags /> */}
+                </div>
+            </Container>
+        </>
     )
 }
 
 const Container = styled.div`
-    margin-top: 72px;
+    margin-top: 100px;           
 
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    
-    > div:last-child {
-        width: 50%;
-        display: flex;
-        justify-content: space-between;
-    }
 `;
 
 const Feed = styled.div`
     width: 62%;
     height: 200px;
-`;
 
-const Trending = styled.div`
-    width: 301px;
-    height: 406px;
-    left: 877px;
-    top: 232px;
-
-    background: #171717;
-    border-radius: 16px;
+    @media (max-width: 700px){
+        width: 100%;
+    }
 `;
 
 const UserInfo = styled.div`
@@ -92,5 +90,10 @@ const UserInfo = styled.div`
         border-radius: 26.5px;
         object-fit: cover;
         margin-right: 20px;
+    }
+
+    @media (max-width: 700px){
+        width: 100%;
+        justify-content: center;
     }
 `;

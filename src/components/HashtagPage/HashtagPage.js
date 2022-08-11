@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Header from "../Header/Header.js";
 
 import RealDataPostCard from "../RealDataPostCard.js";
 
@@ -23,19 +24,22 @@ export default function HashtagPage(){
     }, [hashtag]);
 
     return (
-        <Container>
-            <UserInfo>
-                <h2># {hashtag}</h2>
-            </UserInfo>
-            <div>
-                <Feed>
-                    {
-                        (hashtagPosts.length === 0) ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
-                        hashtagPosts.map((value,index)=><RealDataPostCard key={index} username={value.username} profilePicture={value.profilePicture} postText={value.postText} url={value.url}/>)
-                    }
-                </Feed>
-            </div>
-        </Container>
+        <>
+            <Header />
+            <Container>
+                <UserInfo>
+                    <h2># {hashtag}</h2>
+                </UserInfo>
+                <div>
+                    <Feed>
+                        {
+                            (hashtagPosts.length === 0) ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
+                            hashtagPosts.map((value,index)=><RealDataPostCard key={index} username={value.username} profilePicture={value.profilePicture} postText={value.postText} url={value.url}/>)
+                        }
+                    </Feed>
+                </div>
+            </Container>
+        </>
     )
 }
 

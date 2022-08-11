@@ -15,7 +15,8 @@ function UserDataProvider(props) {
 }
 
 function saveUserDataInLocalStorage(userData) {
-  window.localStorage.setItem(USER_DATA, JSON.stringify(userData));
+  let token = JSON.stringify(userData.token);
+  window.localStorage.setItem(USER_DATA, token);
 }
 
 function deleteUserDataInLocalStorage() {
