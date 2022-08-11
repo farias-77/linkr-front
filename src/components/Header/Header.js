@@ -49,7 +49,7 @@ export default function Header(){
     }
 
     function returnHome(){
-        navigate("/home");
+        navigate("/timeline");
         return;
     }
 
