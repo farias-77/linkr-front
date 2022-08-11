@@ -5,12 +5,22 @@ import UserOption from "./UserOption.js";
 import logo from "../../assets/logo.png";
 import styled from "styled-components";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useUserData, deleteUserDataInLocalStorage } from "../../contexts/UserContext.js";
 
 export default function Header(){
     
     const [ displayLogoutControl, setDisplayLogoutControl ] = useState("display: none;");
     const [ searchInput, setSearchInput ] = useState("");
     const [ usersList, setUsersList ] = useState([]);
+    const [, setUserData] = useUserData();
+    const navigate = useNavigate();
+
+    function signOut (){
+        setUserData("");
+        deleteUserDataInLocalStorage();
+        navigate("/");
+    }
     
     useEffect(() => {       
         if(!searchInput){
@@ -38,10 +48,6 @@ export default function Header(){
         }
     }
 
-    function exit(){
-        //função para deslogar
-    }
-
     function renderSearchOptions(){    
         return usersList.map((user, index) => {return <UserOption key={index} user={user}/>})
     }
@@ -58,7 +64,7 @@ export default function Header(){
                 <SearchOptions display={searchInput ? "" : "display: none;"}>
                     { usersList.length > 0 ? renderSearchOptions() : <></>}
                 </SearchOptions>
-                <LogoutButton display={displayLogoutControl} onClick={exit}><h4>Logout</h4></LogoutButton>
+                <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
             </HeaderContainer>
         </Container>
     )
