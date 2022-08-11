@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Header from "../Header/Header.js";
 import styled from "styled-components";
 import PostCard from "../PostCard.js";
 import axios from "axios";
-import { useEffect, useState } from "react";
 
 export default function UserPage(){
     const { id } = useParams();
@@ -27,20 +28,23 @@ export default function UserPage(){
     }, []);
 
     return (
-        <Container>
-            <UserInfo>
-                <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
-                <h2>Gabriel Barbosa's posts</h2>
-            </UserInfo>
-            <div>
-                <Feed>
-                    <PostCard />
-                </Feed>
-                <Trending>
+        <>
+            <Header />
+            <Container>
+                <UserInfo>
+                    <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
+                    <h2>Gabriel Barbosa's posts</h2>
+                </UserInfo>
+                <div>
+                    <Feed>
+                        <PostCard />
+                    </Feed>
+                    <Trending>
 
-                </Trending>
-            </div>
-        </Container>
+                    </Trending>
+                </div>
+            </Container>
+        </>
     )
 }
 

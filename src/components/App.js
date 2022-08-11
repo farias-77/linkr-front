@@ -3,7 +3,6 @@ import { useState } from "react";
 import SignUp from "./SignUpPage/SignUpPage.js";
 import SignIn from "./SignInPage/SignInPage.js";
 import UserContext from "../contexts/UserContext.js";
-import Header from "./Header/Header.js";
 import UserPage from "./UserPage/UserPage.js";
 import HashtagPage from "./HashtagPage/HashtagPage.js";
 
@@ -14,7 +13,6 @@ export default function App(){
     return(
         <BrowserRouter>
             <UserContext.Provider value={{ user, setUser }}>
-            <Header />
             <Routes>
                 <Route path="/" element={<SignIn/>} />
                 <Route path="/signup" element={<SignUp/>} />
