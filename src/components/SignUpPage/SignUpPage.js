@@ -12,7 +12,7 @@ export default function SignUp () {
         e.preventDefault();
         setDisable(true);
 
-        const promise = axios.post('http://localhost:4000/signup', {
+        const promise = axios.post('https://projeto-17-linkr.herokuapp.com/signup', {
             email: data.email,
             password: data.password,
             username: data.username,
