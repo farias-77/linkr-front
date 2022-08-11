@@ -39,9 +39,6 @@ export default function UserPage(){
                     <Feed>
                         <PostCard />
                     </Feed>
-                    <Trending>
-
-                    </Trending>
                 </div>
             </Container>
         </>
@@ -49,10 +46,10 @@ export default function UserPage(){
 }
 
 const Container = styled.div`
-    margin-top: 72px;
+    margin-top: 72px;           
 
     width: 100%;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     
@@ -61,21 +58,13 @@ const Container = styled.div`
         display: flex;
         justify-content: space-between;
     }
+
+    display: none;
 `;
 
 const Feed = styled.div`
     width: 62%;
     height: 200px;
-`;
-
-const Trending = styled.div`
-    width: 301px;
-    height: 406px;
-    left: 877px;
-    top: 232px;
-
-    background: #171717;
-    border-radius: 16px;
 `;
 
 const UserInfo = styled.div`
