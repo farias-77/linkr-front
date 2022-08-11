@@ -1,10 +1,22 @@
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
-export default function UserOption(){
+export default function UserOption({ user, isLastOption, setShowOptions }){
+    const navigate = useNavigate();
+
+    function redirectUserPage(){
+        if(user.id){
+            setShowOptions(false);
+            navigate("/user/" + user.id);
+            return;
+        }
+        return;
+    }
+    
     return (
-        <Container>
-            <img src="https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2022/01/ARRASCAETA-FLAMENGO-ALEXANDRE-VIDAL-FLAMENGO.jpg" alt="profile" />
-            <h4>Arrascaeta</h4>
+        <Container onClick={redirectUserPage} border={isLastOption ? "0px 0px 8px 8px" : "0px 0px 0px 0px" }>
+            <img src={user.profilePicture} alt="profile" />
+            <h4>{user.username}</h4>
         </Container>
     )
 }
@@ -15,16 +27,17 @@ const Container = styled.div`
     display: flex;
     align-items: center;
 
+    padding: 10px 0;
     padding-left: 10px;
-    margin: 10px 0;
+    
+    border-radius: ${props => props.border};
+    background-color: #E7E7E7;
 
     img{
         width: 50px;
         height: 50px;
         border-radius: 26.5px;
         object-fit: cover;
-
-        cursor: pointer;
     }
 
     h4{
@@ -34,6 +47,15 @@ const Container = styled.div`
         color: #515151;
 
         margin-left: 10px;
+        
+    }
+
+    &:hover{
         cursor: pointer;
+        background-color: #c1c1c1;
+    }
+
+    > div{
+        margin-left: 7%;
     }
 `;
