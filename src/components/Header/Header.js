@@ -1,5 +1,5 @@
 import { DebounceInput } from "react-debounce-input";
-import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import UserOption from "./UserOption.js";
@@ -9,7 +9,6 @@ import axios from "axios";
 import { useUserData, deleteUserDataInLocalStorage } from "../../contexts/UserContext.js";
 
 export default function Header(){
-    
     const [ displayLogoutControl, setDisplayLogoutControl ] = useState("display: none;");
     const [ searchInput, setSearchInput ] = useState("");
     const [ usersList, setUsersList ] = useState([]);
@@ -67,7 +66,7 @@ export default function Header(){
         navigate("/");
     }
 
-    return (
+    return ( 
         <Container>
             <HeaderDesktopContainer>
                 <img src={logo} alt="page logo" onClick={returnHome} />
@@ -80,7 +79,7 @@ export default function Header(){
 
                 <Logout>
                     <div>
-                        <IoIosArrowDown onClick={toggleDisplayLogoutControl}/>
+                    {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
                         <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
                     </div>
                     <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
@@ -93,7 +92,7 @@ export default function Header(){
                     <img src={logo} alt="page logo" onClick={returnHome} />
                     <Logout>
                         <div>
-                            <IoIosArrowDown onClick={toggleDisplayLogoutControl}/>
+                        {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
                             <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
                         </div>
                         <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
@@ -160,7 +159,7 @@ const SearchControl = styled.div`
     width: 35%;
 
     input{
-        z-index: 2;
+        z-index: 1;
         
         width: 100%;
         height: 45px;
@@ -222,7 +221,7 @@ const LogoutButton = styled.div`
     position: absolute;
     top: 68px;
     right: 0;
-    z-index: 0;
+    z-index: 2;
 
     background: #171717;
     border-radius: 0px 0px 0px 20px;
