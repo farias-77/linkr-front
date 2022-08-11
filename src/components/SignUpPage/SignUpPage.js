@@ -18,16 +18,16 @@ export default function SignUp () {
             username: data.username,
             profilePicture: data.profilePicture
         })
-        if (data.email.length === 0) {
-            alert("Por favor, preencha os campos!");
-        }
+       
         promise.then((res) => {
             setData('')
             navigate('/')
         })
         promise.catch((err) => {
             setDisable(false);
-            alert(err.response.data.error);
+            if(err.response.status === 409) {
+                alert("Email já cadastrado!");
+            }
         })
     }
 

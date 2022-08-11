@@ -6,6 +6,7 @@ import UserOption from "./UserOption.js";
 import logo from "../../assets/logo.png";
 import styled from "styled-components";
 import axios from "axios";
+import { useUserData, deleteUserDataInLocalStorage } from "../../contexts/UserContext.js";
 
 export default function Header(){
     
@@ -13,15 +14,18 @@ export default function Header(){
     const [ searchInput, setSearchInput ] = useState("");
     const [ usersList, setUsersList ] = useState([]);
     const [ showOptions, setShowOptions ] = useState(false);
+    const [, setUserData] = useUserData();
     const navigate = useNavigate();
-    
+
     useEffect(() => {       
         if(!searchInput){
             setUsersList([]);
             return;
         }
+        
         const url = `https://projeto-17-linkr.herokuapp.com/users/${searchInput}`;
-        const token = localStorage.getItem("token");
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
         const config = {
             headers:{
                 "Authorization": `Bearer ${token}`
@@ -53,14 +57,15 @@ export default function Header(){
         return;
     }
 
-    function exit(){
-        //função para deslogar
-        console.log("exit");
-    }
-
     function renderSearchOptions(){    
         return usersList.map((user, index) => {return <UserOption key={index} setShowOptions={setShowOptions} user={user} isLastOption={index === usersList.length - 1 ? true : false }/>})
     }   
+
+    function signOut (){
+        setUserData("");
+        deleteUserDataInLocalStorage();
+        navigate("/");
+    }
 
     return (
         <Container>
@@ -78,11 +83,10 @@ export default function Header(){
                         <IoIosArrowDown onClick={toggleDisplayLogoutControl}/>
                         <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
                     </div>
-                    <LogoutButton display={displayLogoutControl} onClick={exit}><h4>Logout</h4></LogoutButton>
+                    <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
                 </Logout>
                 
             </HeaderDesktopContainer>
-
 
             <HeaderMobileContainer>
                 <Menu>
@@ -92,7 +96,7 @@ export default function Header(){
                             <IoIosArrowDown onClick={toggleDisplayLogoutControl}/>
                             <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
                         </div>
-                        <LogoutButton display={displayLogoutControl} onClick={exit}><h4>Logout</h4></LogoutButton>
+                        <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
                     </Logout>
                 </Menu>
 

@@ -7,11 +7,14 @@ import styled from "styled-components";
 import axios from "axios";
 
 export default function UserPage(){
+    
     const [ userPosts, setUserPosts ] = useState();
+    const { id } = useParams();
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/user`;
-        const token = localStorage.getItem("token");
+        const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
         const config = {
             headers:{
                 "Authorization": `Bearer ${token}`

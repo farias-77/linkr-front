@@ -2,51 +2,58 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  useUserData,
+  saveUserDataInLocalStorage,
+} from "../../contexts/UserContext.js";
 
 export default function SignIn() {
-    const [data, setData] = useState({email: "", password: ""});
-    const navigate = useNavigate();
-    const [disable, setDisable] = useState(false);
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
+  const [disable, setDisable] = useState(false);
+  const [, setUserData] = useUserData();
 
-    function signIn(e) {
-        e.preventdefault();
-        setDisable(true);
+  function signIn(e) {
+    e.preventDefault();
 
-        const promise = axios.post('https://projeto-17-linkr.herokuapp.com/signin', {
-            email: data.email,
-            password: data.password
-        });
+    setDisable(true);
+    const promise = axios.post('https://projeto-17-linkr.herokuapp.com/signin', {
+      email: credentials.email,
+      password: credentials.password,
+    });
 
-        promise.then((res) => {
-            setData("");
-            navigate("/timeline")
-        });
-
-        promise.catch((err) => {
-            setDisable(false);
-            alert(err.response.data.error);
-        })
+    promise.then((res) => {
+      setUserData(res.data);
+      saveUserDataInLocalStorage(res.data);
+      navigate("/timeline");
+    });
+    promise.catch((err) => {
+      setDisable(false);
+      if(err.response.status === 401) {
+        alert("Email ou senha incorretos!");
     }
+  });
+ }
 
-    return (
-        <Container>
-            <Info>
-                <h1>linkr</h1>
-                <h2>save, share and discover <br />the best links on the web</h2>
-            </Info>
-            <Form onSubmit={signIn}>
-                <input id="e-mail" placeholder="e-mail" type="email" required value={data.email} onChange={e => setData({ ...data, email: e.target.value })} />
-                <input placeholder="password" type="password" required value={data.password} onChange={e => setData({ ...data, password: e.target.value })} />
-                {
-                    disable ? <ButtonDisabled>Sign In</ButtonDisabled>
-                    : <button type="submit">Sign In</button>
-                }
-                <Link to="/signup">
-                    <p>First time? Create an account!</p>
-                </Link>
-            </Form>
-        </Container>
-    )
+  return (
+    <Container>
+      <Info>
+        <h1>linkr</h1>
+        <h2>save, share and discover <br />the best links on the web</h2>
+      </Info>
+      <Form onSubmit={signIn}>
+        <input id="e-mail" placeholder="e-mail" type="email" required value={credentials.email} onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
+        />
+        <input placeholder="password" type="password" required value={credentials.password} onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+        />
+        {disable ? ( <ButtonDisabled>Log in</ButtonDisabled>) :
+        (<button type="submit">Log in</button>)}
+        <Link to="/signup">
+          <p>First time? Create an account!</p>
+        </Link>
+      </Form>
+    </Container>
+  );
 }
 
 const Container=styled.div`
