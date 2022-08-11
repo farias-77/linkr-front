@@ -2,10 +2,20 @@ import { IoIosHeart } from "react-icons/io";
 import { IoTrash } from "react-icons/io5"; 
 import { ImPencil } from "react-icons/im";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 export default function RealDataPostCard({profilePicture,username,postText,url}){
     
+    const navigate = useNavigate();
     const num = 9;
+
+    function navigateToHashtag(word){
+        const index = word.indexOf("#")
+        if(index === 0){
+            const hashtag = word.slice(1);
+            navigate(`/hashtag/${hashtag}`);
+        }
+    }
 
     return (
         <Container>
@@ -22,12 +32,45 @@ export default function RealDataPostCard({profilePicture,username,postText,url})
                         <IoTrash />
                     </div>
                 </PostCardHeader>
-                <p>{postText}</p>
+                <InteractableText text={postText} navigateToHashtag={navigateToHashtag}/>
                 <p>{url}</p>
             </PostContent>
         </Container>
     )
 }
+
+function InteractableText({text,navigateToHashtag}){
+
+    function isHashtag(word){
+        const index = word.indexOf("#");
+        if(index === 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    return(
+        <>
+            {
+                text.split(' ').map((word,index) => 
+                {
+                    return (
+                        <>
+                            {
+                                isHashtag(word) ? 
+                                <span style={{fontWeight:700}} key={index} onClick={() => navigateToHashtag(word)}>{word}&nbsp;</span>
+                                :
+                                <span ket={index}>{word}&nbsp;</span>
+                            }
+                        </>
+                    )
+                })
+            }
+        </>
+    )
+} 
 
 const Container = styled.div`
     width: 611px;
@@ -85,7 +128,15 @@ const PostContent = styled.div`
         line-height: 20px;
         color: #B7B7B7;
 
-        margin-top: 10px;
+        margin-top: 20px;
+    }
+    span{
+        font-weight: 400;
+        font-size: 17px;
+        line-height: 20px;
+        color: #B7B7B7;
+
+        margin-top: 30px;
     }
 `;
 

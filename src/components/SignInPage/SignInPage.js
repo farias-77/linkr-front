@@ -32,8 +32,8 @@ export default function SignIn() {
       if(err.response.status === 401) {
         alert("Email ou senha incorretos!");
     }
-    });
-  }
+  });
+ }
 
   return (
     <Container>
