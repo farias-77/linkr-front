@@ -33,7 +33,7 @@ export default function UserPage(){
     }, [id]);
 
     function renderUserPosts(){
-        return userPosts.posts.map((post,index) => { return <RealDataPostCard key={index} profilePicture={userInfo.profilePicture} username={userInfo.username} postText={post.postText} url={post.url} /> });
+        return userPosts.map((post,index) => { return <RealDataPostCard key={index} profilePicture={userInfo.profilePicture} username={userInfo.username} postText={post.postText} url={post.url} /> });
     }
 
     return (
@@ -46,9 +46,10 @@ export default function UserPage(){
                 </UserInfo>
                 <div>
                     <Feed>
-                        {userPosts.length > 0 ? renderUserPosts : <h4>Este usuário ainda não tem nenhum post...</h4> }
+                        {userPosts.length > 0 ? renderUserPosts() : <h4>Este usuário ainda não tem nenhum post...</h4> }
                     </Feed>
-                    <TrendingHashtags />
+                    {/* <TrendingHashtags /> */}
+                    <Trending />
                 </div>
             </Container>
         </>
@@ -64,15 +65,21 @@ const Container = styled.div`
     align-items: center;
     
     > div:last-child {
-        width: 50%;
+        width: 70%;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
+    }
+
+    @media (max-width: 700px){
+        > div:last-child {
+            width: 100%;
+        }
+
     }
 `;
 
 const Feed = styled.div`
     width: 62%;
-    height: 200px;
 
     h4{
         font-family: 'Oswald';
@@ -81,16 +88,22 @@ const Feed = styled.div`
         font-size: 30px;
         line-height: 64px;
         color: #FFFFFF;
-        width: 611px;
     }
 
     @media (max-width: 700px){
         width: 100%;
+        display: flex;
+        flex-direction:column;
+        justify-content: center;
+
+        h4{
+            margin-left: 4%;
+        }
     }
 `;
 
 const UserInfo = styled.div`
-    width: 50%;
+    width: 90%;
 
     margin-top: 50px;
     margin-bottom: 30px;
@@ -117,5 +130,16 @@ const UserInfo = styled.div`
         width: 100%;
         padding-left: 3%;
         justify-content: flex-start;
+    }
+`;
+
+const Trending = styled.div`
+    width: 301px;
+    height: 406px;
+    background-color: black;
+    border-radius: 16px;
+
+    @media (max-width: 800px){
+        display: none;
     }
 `;

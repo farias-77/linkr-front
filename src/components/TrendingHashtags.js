@@ -16,11 +16,10 @@ export default function TrendignHashtags(){
         });
 
         promise.catch((res) => {
-            alert(res.data);
+            console.log(res.data);
         })
     }, []);
 
-    console.log(trendignHashtags)
     return (
         <Container>
             <h4>trending</h4>
@@ -81,5 +80,9 @@ const Container = styled.div`
 
         margin-bottom: 8px;
 
+    }
+
+    @media (max-width: 800px){
+        display: none;
     }
 `;
