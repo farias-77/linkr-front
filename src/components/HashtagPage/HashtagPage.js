@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Header from "../Header/Header.js";
 
 import RealDataPostCard from "../RealDataPostCard.js";
+import TrendignHashtags from "../TrendingHashtags.js";
 
 export default function HashtagPage(){
     const { hashtag } = useParams();
@@ -12,7 +13,14 @@ export default function HashtagPage(){
 
     useEffect(() => {
         const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}`;
-        const promise = axios.get(url);
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
 
         promise.then((res) => {
             setHashtagPosts(res.data);
@@ -30,6 +38,7 @@ export default function HashtagPage(){
                 <UserInfo>
                     <h2># {hashtag}</h2>
                 </UserInfo>
+                <TrendignHashtags/>
                 <div>
                     <Feed>
                         {
