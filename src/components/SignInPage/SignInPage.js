@@ -82,7 +82,7 @@ const Container=styled.div`
         justify-content: center;
 
         button {
-            height: 10%;
+            height: 12%;
         }
 
         p {
@@ -123,12 +123,10 @@ const Info = styled.div`
 
         h1 {
             font-size: 76px;
-            margin-top: 50px;
         }
 
         h2 {
-            font-size: 23px;
-            margin-bottom: 60px;            
+            font-size: 23px;            
         }
     }
 `
@@ -176,10 +174,10 @@ const Form = styled.form`
 
     @media (max-width: 700px) {
         width: 100vw;
-        height: 70%;
+        height: 65%;
         bottom: 0;
         input {
-            height: 10%;
+            height: 12%;
         }
     }
 `
