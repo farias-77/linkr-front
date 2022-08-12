@@ -28,6 +28,9 @@ export default function SignUp () {
             if(err.response.status === 409) {
                 alert("Email já cadastrado!");
             }
+            if(err.response.status === 500) {
+                alert("Erro no servidor!");
+            }
         })
     }
 
@@ -47,7 +50,7 @@ export default function SignUp () {
                     : <button type='submit'>Sign Up</button>
                 }
                 <Link to='/'>
-                    <p>Swith back to log in</p>
+                    <p>Switch back to log in</p>
                 </Link>
             </Form>
         </Container>
@@ -79,7 +82,7 @@ const Container = styled.div`
         justify-content: center;
 
         button {
-            height: 10%;
+            height: 12%;
         }
 
         p {
@@ -103,7 +106,7 @@ const Info = styled.div`
     }
 
     h2 {
-        font-size: 45px;
+        font-size: 40px;
         font-weight: 700;
         line-height: 65px;
         font-family: 'Oswald', sans-serif;
@@ -171,11 +174,11 @@ const Form = styled.form`
 
     @media (max-width: 700px) {
         width: 100vw;
-        height: 70%;
+        height: 65%;
         bottom: 0;
 
         input {
-            height: 10%;
+            height: 12%;
         }
     }
 `
