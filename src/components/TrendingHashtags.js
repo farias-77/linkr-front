@@ -9,7 +9,14 @@ export default function TrendignHashtags(){
     
     useEffect(() => {
         const url = `https://projeto-17-linkr.herokuapp.com/trending`;
-        const promise = axios.get(url);
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
 
         promise.then((res) => {
             setTrendingHashtags(res.data);
@@ -81,5 +88,9 @@ const Container = styled.div`
 
         margin-bottom: 8px;
 
+    }
+
+    @media (max-width: 700px) {
+        display: none;
     }
 `;
