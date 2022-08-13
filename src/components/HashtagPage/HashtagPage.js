@@ -38,14 +38,14 @@ export default function HashtagPage(){
                     <h2># {hashtag}</h2>
                 </UserInfo>
                 <div>
-                    <Feed>
+                    {/* <Feed>
                         {
                             (hashtagPosts.length === 0) ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
                             hashtagPosts.map((value,index)=>
                             <RealDataPostCard key={index} userId={value.userId} username={value.username} profilePicture={value.profilePicture} postText={value.postText} postId={value.postId} url={value.url} numLikes={value.numLikes} whoLiked={value.whoLiked}
                             refresh={refresh} setRefresh={setRefresh}/>)
                         }
-                    </Feed>
+                    </Feed> */}
                 </div>
             </Container>
         </>

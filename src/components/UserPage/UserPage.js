@@ -1,5 +1,5 @@
 import TrendingHashtags from "../TrendingHashtags.js";
-import RealDataPostCard from "../RealDataPostCard.js";
+import PostCard from "../PostCard.js";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Header from "../Header/Header.js";
@@ -33,7 +33,7 @@ export default function UserPage(){
     }, [id]);
 
     function renderUserPosts(){
-        return userPosts.map((post,index) => { return <RealDataPostCard key={index} profilePicture={userInfo.profilePicture} username={userInfo.username} postText={post.postText} url={post.url} /> });
+        return userPosts.map((post,index) => { return <PostCard key={index} user={userInfo} post={post} /> });
     }
 
     return (
@@ -49,7 +49,7 @@ export default function UserPage(){
                         {userPosts.length > 0 ? renderUserPosts() : <h4>Este usuário ainda não tem nenhum post...</h4> }
                     </Feed>
                     {/* <TrendingHashtags /> */}
-                    <Trending />
+                    {/* <Trending /> */}
                 </div>
             </Container>
         </>
