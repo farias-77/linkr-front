@@ -12,7 +12,7 @@ export default function HashtagPage(){
     const [ refresh, setRefresh ] = useState([]);
 
     useEffect(() => {
-        const url = `http://localhost:5000/hashtag/${hashtag}`;
+        const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
