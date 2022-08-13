@@ -51,7 +51,6 @@ export default function PostCard({ user, post }){
         })
     }
 
-    let varUserLiked = userLiked();
     function userLiked(){
         const localWhoLiked = post.whoLiked.filter(username => username !== userUsername);
 
@@ -64,7 +63,6 @@ export default function PostCard({ user, post }){
         }
     }
 
-    let varUserDLiked = userDLiked();
     function userDLiked(){
 
         if(post.whoLiked.length === 1){
@@ -76,12 +74,20 @@ export default function PostCard({ user, post }){
         }      
     }
 
+    function navigateToHashtag(word){
+        const index = word.indexOf("#")
+        if(index === 0){
+            const hashtag = word.slice(1);
+            navigate(`/hashtag/${hashtag}`);
+        }
+    }
+
     return (
         <Container>
            <PictureAndLike>
                <img src={user.profilePicture} alt="profile" />
                {liked ? <IoIosHeart color="#AC0000" onClick={toggleLike}/> : <IoIosHeartEmpty color="#FFFFFF" onClick={toggleLike}/>}
-               <p data-tip={(liked ? varUserLiked : varUserDLiked)}>{likeCount} likes</p>
+               <p data-tip={(liked ? userLiked() : userDLiked())}>{likeCount} likes</p>
                <ReactTooltip />
            </PictureAndLike>
 
@@ -93,7 +99,7 @@ export default function PostCard({ user, post }){
                         <IoTrash />
                     </div>
                 </div>
-                <h5>{post.postText}</h5>
+                <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
                 <UrlPreview>
                     <div>
                         <h3>{post.title}</h3>
@@ -159,6 +165,7 @@ const PostContent = styled.div`
     > div {
         display: flex; 
         justify-content: space-between;
+        margin-bottom: 10px;
 
         h4{
             font-weight: 400;
@@ -174,15 +181,25 @@ const PostContent = styled.div`
         }
     }
 
-    h5{
-        font-family: 'Lato';
-        font-style: normal;
+    span{
         font-weight: 400;
         font-size: 17px;
         line-height: 20px;
         color: #B7B7B7;
 
-        margin-top: 10px;
+        margin-top: 30px;
+        cursor: pointer;
+    }
+
+    p{
+        font-weight: 400;
+        font-size: 17px;
+        line-height: 20px;
+        color: #B7B7B7;
+
+        margin-top: 30px;
+
+        display: inline;
     }
 `;
 
@@ -243,3 +260,36 @@ const UrlPreview = styled.div`
         }
     }
 `;
+
+function InteractableText({text,navigateToHashtag}){
+
+    function isHashtag(word){
+        const index = word.indexOf("#");
+        if(index === 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    return(
+        <>
+            {
+                text.split(' ').map((word,index) => 
+                {
+                    return (
+                        <>
+                            {
+                                isHashtag(word) ? 
+                                <span style={{fontWeight:700}} key={index} onClick={() => navigateToHashtag(word)}>{word}&nbsp;</span>
+                                :
+                                <p key={index}>{word}&nbsp;</p>
+                            }
+                        </>
+                    )
+                })
+            }
+        </>
+    )
+} 
