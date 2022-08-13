@@ -17,7 +17,7 @@ export default function SignIn() {
     e.preventDefault();
 
     setDisable(true);
-    const promise = axios.post('https://projeto-17-linkr.herokuapp.com/signin', {
+    const promise = axios.post('http://localhost:5000/signin', {
       email: credentials.email,
       password: credentials.password,
     });
