@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactTooltip from "react-tooltip";
 
-export default function RealDataPostCard({profilePicture,username,postText,postId,url,numLikes,whoLiked,refresh,setRefresh}){
+export default function RealDataPostCard({userId, profilePicture,username,postText,postId,url,numLikes,whoLiked,refresh,setRefresh}){
     
     const navigate = useNavigate();
 
@@ -48,7 +48,7 @@ export default function RealDataPostCard({profilePicture,username,postText,postI
             </PostInfo>
             <PostContent>
                 <PostCardHeader>
-                    <h4>{username}</h4>
+                    <h4 onClick={()=>{navigate(`/user/${userId}`)}}>{username}</h4>
                     <div>
                         <ImPencil />
                         <IoTrash />

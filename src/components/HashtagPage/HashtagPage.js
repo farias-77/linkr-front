@@ -9,7 +9,7 @@ import RealDataPostCard from "../RealDataPostCard.js";
 export default function HashtagPage(){
     const { hashtag } = useParams();
     const [ hashtagPosts, setHashtagPosts ] = useState([]);
-    const [ refresh, setRefresh ] = useState([]);
+    const [ refresh, setRefresh ] = useState(0);
 
     useEffect(() => {
         const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}`;
@@ -42,7 +42,7 @@ export default function HashtagPage(){
                         {
                             (hashtagPosts.length === 0) ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
                             hashtagPosts.map((value,index)=>
-                            <RealDataPostCard key={index} username={value.username} profilePicture={value.profilePicture} postText={value.postText} postId={value.postId} url={value.url} numLikes={value.numLikes} whoLiked={value.whoLiked}
+                            <RealDataPostCard key={index} userId={value.userId} username={value.username} profilePicture={value.profilePicture} postText={value.postText} postId={value.postId} url={value.url} numLikes={value.numLikes} whoLiked={value.whoLiked}
                             refresh={refresh} setRefresh={setRefresh}/>)
                         }
                     </Feed>

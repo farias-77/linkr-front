@@ -58,7 +58,6 @@ export default function UserPage(){
 
 const Container = styled.div`
     margin-top: 100px;           
-
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -69,18 +68,15 @@ const Container = styled.div`
         display: flex;
         justify-content: center;
     }
-
     @media (max-width: 700px){
         > div:last-child {
             width: 100%;
         }
-
     }
 `;
 
 const Feed = styled.div`
     width: 62%;
-
     h4{
         font-family: 'Oswald';
         font-style: normal;
@@ -89,13 +85,11 @@ const Feed = styled.div`
         line-height: 64px;
         color: #FFFFFF;
     }
-
     @media (max-width: 700px){
         width: 100%;
         display: flex;
         flex-direction:column;
         justify-content: center;
-
         h4{
             margin-left: 4%;
         }
@@ -104,10 +98,8 @@ const Feed = styled.div`
 
 const UserInfo = styled.div`
     width: 90%;
-
     margin-top: 50px;
     margin-bottom: 30px;
-
     display: flex;
     align-items: center;
     
@@ -116,7 +108,6 @@ const UserInfo = styled.div`
     font-size: 43px;
     line-height: 64px;
     color: #FFFFFF;
-
     img{
         width: 50px;
         height: 50px;
@@ -125,7 +116,6 @@ const UserInfo = styled.div`
         object-fit: cover;
         margin-right: 20px;
     }
-
     @media (max-width: 700px){
         width: 100%;
         padding-left: 3%;
@@ -138,7 +128,6 @@ const Trending = styled.div`
     height: 406px;
     background-color: black;
     border-radius: 16px;
-
     @media (max-width: 800px){
         display: none;
     }
