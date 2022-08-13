@@ -88,49 +88,64 @@ export default function Header(){
     }
 
     return ( 
-        <Container>
-            <HeaderDesktopContainer>
-                <img src={logo} alt="page logo" onClick={returnHome} />
-                <SearchControl>
-                    <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
-                    <SearchOptions display={searchInput ? "" : "display: none;"}>
-                        { usersList.length > 0 && showOptions ? renderSearchOptions() : <></>}
-                    </SearchOptions>
-                </SearchControl>
-
-                <Logout>
-                    <div>
-                        {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
-                        <img src={ userInfo.profilePicture ? userInfo.profilePicture : "" } alt="profile" />
-                    </div>
-                    <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
-                </Logout>
-                
-            </HeaderDesktopContainer>
-
-            <HeaderMobileContainer>
-                <Menu>
+        <>
+            <Container>
+                <HeaderDesktopContainer>
                     <img src={logo} alt="page logo" onClick={returnHome} />
+                    <SearchControl>
+                        <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
+                        <SearchOptions display={searchInput ? "" : "display: none;"}>
+                            { usersList.length > 0 && showOptions ? renderSearchOptions() : <></>}
+                        </SearchOptions>
+                    </SearchControl>
+
                     <Logout>
                         <div>
-                        {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
+                            {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
                             <img src={ userInfo.profilePicture ? userInfo.profilePicture : "" } alt="profile" />
                         </div>
                         <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
                     </Logout>
-                </Menu>
+                    
+                </HeaderDesktopContainer>
 
-                <SearchControl>
-                    <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
-                    <SearchOptions display={searchInput ? "" : "display: none;"}>
-                        { usersList.length > 0 && showOptions ? renderSearchOptions() : <></>}
-                    </SearchOptions>
-                </SearchControl>
+                <HeaderMobileContainer>
+                    <Menu>
+                        <img src={logo} alt="page logo" onClick={returnHome} />
+                        <Logout>
+                            <div>
+                            {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
+                                <img src={ userInfo.profilePicture ? userInfo.profilePicture : "" } alt="profile" />
+                            </div>
+                            <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
+                        </Logout>
+                    </Menu>
 
-            </HeaderMobileContainer>
-        </Container>
+                    <SearchControl>
+                        <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
+                        <SearchOptions display={searchInput ? "" : "display: none;"}>
+                            { usersList.length > 0 && showOptions ? renderSearchOptions() : <></>}
+                        </SearchOptions>
+                    </SearchControl>
+
+                </HeaderMobileContainer>
+            </Container>
+            <FullScreen display={displayLogoutControl ? "display: none;" : ""} onClick={toggleDisplayLogoutControl}/>
+        </>
     )
 }
+const FullScreen = styled.div`
+    width: 100%;
+    height: 100%;
+
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+
+    ${props => props.display}
+`;
 
 const Container = styled.div`
     position: fixed;
@@ -144,6 +159,7 @@ const Container = styled.div`
         align-items: center;
         justify-content: center;
     }
+    z-index: 2;
 `;
 
 const HeaderDesktopContainer = styled.div`
@@ -231,6 +247,8 @@ const Logout = styled.div`
         display: flex;
         align-items: center;
     }
+
+    z-index: 2;
 `;
 
 const LogoutButton = styled.div`
