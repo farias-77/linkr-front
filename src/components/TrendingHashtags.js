@@ -35,7 +35,7 @@ export default function TrendignHashtags(){
             {
                 trendignHashtags.length === 0 ? <></> 
                 :
-                trendignHashtags.map((value,index)=> <Link style={{textDecoration:"none"}} to={`/hashtag/${value.hashtag}`}><p key={index}># {value.hashtag}</p></Link>)
+                trendignHashtags.map((value,index)=> <Link key={index} style={{textDecoration:"none"}} to={`/hashtag/${value.hashtag}`}><p key={index}># {value.hashtag}</p></Link>)
             }
         </Container>
     )
