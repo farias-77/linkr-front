@@ -2,17 +2,25 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Header from "../Header/Header.js";
 
+import Header from "../Header/Header.js";
 import RealDataPostCard from "../RealDataPostCard.js";
 
 export default function HashtagPage(){
     const { hashtag } = useParams();
     const [ hashtagPosts, setHashtagPosts ] = useState([]);
+    const [ refresh, setRefresh ] = useState([]);
 
     useEffect(() => {
         const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}`;
-        const promise = axios.get(url);
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
 
         promise.then((res) => {
             setHashtagPosts(res.data);
@@ -21,8 +29,7 @@ export default function HashtagPage(){
         promise.catch((res) => {
             alert(res.data);
         })
-    }, [hashtag]);
-
+    }, [hashtag,refresh]);
     return (
         <>
             <Header />
@@ -34,7 +41,9 @@ export default function HashtagPage(){
                     <Feed>
                         {
                             (hashtagPosts.length === 0) ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
-                            hashtagPosts.map((value,index)=><RealDataPostCard key={index} username={value.username} profilePicture={value.profilePicture} postText={value.postText} url={value.url}/>)
+                            hashtagPosts.map((value,index)=>
+                            <RealDataPostCard key={index} username={value.username} profilePicture={value.profilePicture} postText={value.postText} postId={value.postId} url={value.url} numLikes={value.numLikes} whoLiked={value.whoLiked}
+                            refresh={refresh} setRefresh={setRefresh}/>)
                         }
                     </Feed>
                 </div>

@@ -14,7 +14,28 @@ export default function Header(){
     const [ usersList, setUsersList ] = useState([]);
     const [ showOptions, setShowOptions ] = useState(false);
     const [, setUserData] = useUserData();
+    const [ userInfo, setUserInfo] = useState({username: "", profilePicture: ""});
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const url = `https://projeto-17-linkr.herokuapp.com/userInfo`;
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
+        promise.then((res) => {
+            window.localStorage.setItem("username", res.data[0].username);
+            setUserInfo({...userInfo, username: res.data[0].username, profilePicture: res.data[0].profilePicture});
+        });
+        
+        promise.catch((res) => {
+            console.log(res.data);
+        })
+    }, []);
 
     useEffect(() => {       
         if(!searchInput){
@@ -79,8 +100,8 @@ export default function Header(){
 
                 <Logout>
                     <div>
-                    {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
-                        <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
+                        {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
+                        <img src={ userInfo.profilePicture ? userInfo.profilePicture : "" } alt="profile" />
                     </div>
                     <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
                 </Logout>
@@ -93,7 +114,7 @@ export default function Header(){
                     <Logout>
                         <div>
                         {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
-                            <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
+                            <img src={ userInfo.profilePicture ? userInfo.profilePicture : "" } alt="profile" />
                         </div>
                         <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
                     </Logout>

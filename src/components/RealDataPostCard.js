@@ -1,13 +1,14 @@
-import { IoIosHeart } from "react-icons/io";
+import { IoIosHeart,IoIosHeartEmpty } from "react-icons/io";
 import { IoTrash } from "react-icons/io5"; 
 import { ImPencil } from "react-icons/im";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import ReactTooltip from "react-tooltip";
 
-export default function RealDataPostCard({profilePicture,username,postText,url}){
+export default function RealDataPostCard({profilePicture,username,postText,postId,url,numLikes,whoLiked,refresh,setRefresh}){
     
     const navigate = useNavigate();
-    const num = 9;
 
     function navigateToHashtag(word){
         const index = word.indexOf("#")
@@ -16,13 +17,34 @@ export default function RealDataPostCard({profilePicture,username,postText,url})
             navigate(`/hashtag/${hashtag}`);
         }
     }
-
+    async function likeOrDislike(postId){
+        const url = `https://projeto-17-linkr.herokuapp.com/like/${postId}`;
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const body ={}
+        await axios.post(url, body, config);
+        setRefresh(refresh+1);        
+    }
+    
+    const userUsername = "Dimitri";
+    let isLiked;
+    if(whoLiked.length === 0){
+        isLiked = false;
+    }else{
+        isLiked = whoLiked.includes(userUsername);
+    }
+    
     return (
         <Container>
             <PostInfo>
                 <img src={profilePicture} alt="profile" />
-                <IoIosHeart />
-                <h4>{num} likes</h4>
+                <InteractableLike isLiked={isLiked} postId={postId} likeOrDislike={likeOrDislike} whoLiked={whoLiked} numLikes={numLikes}/>
+                <h4>{numLikes} likes</h4>
             </PostInfo>
             <PostContent>
                 <PostCardHeader>
@@ -37,6 +59,62 @@ export default function RealDataPostCard({profilePicture,username,postText,url})
             </PostContent>
         </Container>
     )
+}
+
+function InteractableLike({isLiked,postId,likeOrDislike,whoLiked,numLikes}){
+    if(isLiked){
+        let text = ""
+        console.log(numLikes)
+        if(numLikes===1){
+            text = "Você curtiu"
+        }else{
+            if(numLikes===2){
+                text = `Você e ${whoLiked[1]} curtiram`
+            }
+            else{
+                text = `Você, ${whoLiked[1]} e mais ${numLikes-2} curtiram`
+            }
+        }
+        
+        return(
+            <>
+                <IoIosHeart 
+                data-tip data-for="likeTip"
+                onClick={()=>{likeOrDislike(postId)}} 
+                style={{color:'#AC0000',fontSize:30}}/>
+                <ReactTooltip id={"likeTip"} place={"bottom"} effect="solid">
+                    {text} 
+                </ReactTooltip>
+            </>
+        )
+    }else{
+        let text = ""
+        if(numLikes===0){
+            text = "Seja o primeiro a curtir!"
+        }else{
+            if(numLikes===1){
+                text = `${whoLiked[0]} curtiu`
+            }else{
+                if(numLikes===2){
+                    text = `${whoLiked[0]} e ${whoLiked[1]} curtiram`
+                }
+                else{
+                    text = `${whoLiked[0]}, ${whoLiked[1]} e mais ${numLikes-2} curtiram`
+                }
+            }
+        }
+        return(
+            <>
+                <IoIosHeartEmpty 
+                data-tip data-for="likeTip"
+                onClick={()=>{likeOrDislike(postId)}} 
+                style={{color:'white',fontSize:30}}/>
+                <ReactTooltip id={"likeTip"} place={"bottom"} effect="solid">
+                    {text} 
+                </ReactTooltip>
+            </>
+        )
+    }
 }
 
 function InteractableText({text,navigateToHashtag}){
@@ -106,7 +184,6 @@ const PostInfo = styled.div`
     }
 
     svg{
-        color: #AC0000;
         font-size: 25px;
         margin-top: 15px;
 
