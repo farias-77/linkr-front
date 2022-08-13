@@ -1,5 +1,5 @@
 import { DebounceInput } from "react-debounce-input";
-import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import UserOption from "./UserOption.js";
@@ -9,13 +9,33 @@ import axios from "axios";
 import { useUserData, deleteUserDataInLocalStorage } from "../../contexts/UserContext.js";
 
 export default function Header(){
-    
     const [ displayLogoutControl, setDisplayLogoutControl ] = useState("display: none;");
     const [ searchInput, setSearchInput ] = useState("");
     const [ usersList, setUsersList ] = useState([]);
     const [ showOptions, setShowOptions ] = useState(false);
     const [, setUserData] = useUserData();
+    const [ userInfo, setUserInfo] = useState({username: "", profilePicture: ""});
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const url = `https://projeto-17-linkr.herokuapp.com/userInfo`;
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
+        promise.then((res) => {
+            window.localStorage.setItem("username", res.data[0].username);
+            setUserInfo({...userInfo, username: res.data[0].username, profilePicture: res.data[0].profilePicture});
+        });
+        
+        promise.catch((res) => {
+            console.log(res.data);
+        })
+    }, []);
 
     useEffect(() => {       
         if(!searchInput){
@@ -67,50 +87,65 @@ export default function Header(){
         navigate("/");
     }
 
-    return (
-        <Container>
-            <HeaderDesktopContainer>
-                <img src={logo} alt="page logo" onClick={returnHome} />
-                <SearchControl>
-                    <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
-                    <SearchOptions display={searchInput ? "" : "display: none;"}>
-                        { usersList.length > 0 && showOptions ? renderSearchOptions() : <></>}
-                    </SearchOptions>
-                </SearchControl>
-
-                <Logout>
-                    <div>
-                        <IoIosArrowDown onClick={toggleDisplayLogoutControl}/>
-                        <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
-                    </div>
-                    <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
-                </Logout>
-                
-            </HeaderDesktopContainer>
-
-            <HeaderMobileContainer>
-                <Menu>
+    return ( 
+        <>
+            <Container>
+                <HeaderDesktopContainer>
                     <img src={logo} alt="page logo" onClick={returnHome} />
+                    <SearchControl>
+                        <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
+                        <SearchOptions display={searchInput ? "" : "display: none;"}>
+                            { usersList.length > 0 && showOptions ? renderSearchOptions() : <></>}
+                        </SearchOptions>
+                    </SearchControl>
+
                     <Logout>
                         <div>
-                            <IoIosArrowDown onClick={toggleDisplayLogoutControl}/>
-                            <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
+                            {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
+                            <img src={ userInfo.profilePicture ? userInfo.profilePicture : "" } alt="profile" />
                         </div>
                         <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
                     </Logout>
-                </Menu>
+                    
+                </HeaderDesktopContainer>
 
-                <SearchControl>
-                    <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
-                    <SearchOptions display={searchInput ? "" : "display: none;"}>
-                        { usersList.length > 0 && showOptions ? renderSearchOptions() : <></>}
-                    </SearchOptions>
-                </SearchControl>
+                <HeaderMobileContainer>
+                    <Menu>
+                        <img src={logo} alt="page logo" onClick={returnHome} />
+                        <Logout>
+                            <div>
+                            {displayLogoutControl ? <IoIosArrowDown onClick={toggleDisplayLogoutControl}/> : <IoIosArrowUp onClick={toggleDisplayLogoutControl}/>  }
+                                <img src={ userInfo.profilePicture ? userInfo.profilePicture : "" } alt="profile" />
+                            </div>
+                            <LogoutButton display={displayLogoutControl} onClick={signOut}><h4>Logout</h4></LogoutButton>
+                        </Logout>
+                    </Menu>
 
-            </HeaderMobileContainer>
-        </Container>
+                    <SearchControl>
+                        <DebounceInput minLength={3} debounceTimeout={300} onChange={e => setSearchInput(e.target.value)} placeholder="Search for people"/>
+                        <SearchOptions display={searchInput ? "" : "display: none;"}>
+                            { usersList.length > 0 && showOptions ? renderSearchOptions() : <></>}
+                        </SearchOptions>
+                    </SearchControl>
+
+                </HeaderMobileContainer>
+            </Container>
+            <FullScreen display={displayLogoutControl ? "display: none;" : ""} onClick={toggleDisplayLogoutControl}/>
+        </>
     )
 }
+const FullScreen = styled.div`
+    width: 100%;
+    height: 100%;
+
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+
+    ${props => props.display}
+`;
 
 const Container = styled.div`
     position: fixed;
@@ -124,6 +159,7 @@ const Container = styled.div`
         align-items: center;
         justify-content: center;
     }
+    z-index: 2;
 `;
 
 const HeaderDesktopContainer = styled.div`
@@ -160,7 +196,7 @@ const SearchControl = styled.div`
     width: 35%;
 
     input{
-        z-index: 2;
+        z-index: 1;
         
         width: 100%;
         height: 45px;
@@ -211,6 +247,8 @@ const Logout = styled.div`
         display: flex;
         align-items: center;
     }
+
+    z-index: 2;
 `;
 
 const LogoutButton = styled.div`
@@ -222,7 +260,7 @@ const LogoutButton = styled.div`
     position: absolute;
     top: 68px;
     right: 0;
-    z-index: 0;
+    z-index: 2;
 
     background: #171717;
     border-radius: 0px 0px 0px 20px;

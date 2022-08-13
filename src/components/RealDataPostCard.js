@@ -161,6 +161,10 @@ const Container = styled.div`
     display: flex;
 
     margin-bottom: 30px;
+
+    @media (max-width: 700px){
+        width: 100%;
+    }
 `;
 
 const PostInfo = styled.div`

@@ -8,7 +8,8 @@ import axios from "axios";
 
 export default function UserPage(){
     
-    const [ userPosts, setUserPosts ] = useState();
+    const [ userPosts, setUserPosts ] = useState([]);
+    const [ userInfo, setUserInfo ] = useState({username: "", profilePicture: ""})
     const { id } = useParams();
 
     useEffect(() => {
@@ -22,27 +23,33 @@ export default function UserPage(){
         }
         const promise = axios.get(url, config);
         promise.then((res) => {
-            setUserPosts(res.data);
+            setUserPosts(res.data.posts);
+            setUserInfo({ username: res.data.username, profilePicture: res.data.profilePicture });
         });
         
         promise.catch((res) => {
             console.log(res.data);
         })
-    }, []);
+    }, [id]);
+
+    function renderUserPosts(){
+        return userPosts.map((post,index) => { return <RealDataPostCard key={index} profilePicture={userInfo.profilePicture} username={userInfo.username} postText={post.postText} url={post.url} /> });
+    }
 
     return (
         <>
             <Header />
             <Container>
                 <UserInfo>
-                    <img src="https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg" alt="profile" />
-                    <h2>Gabriel Barbosa's posts</h2>
+                    <img src={userInfo.profilePicture} alt="profile" />
+                    <h2>{userInfo.username} 's posts</h2>
                 </UserInfo>
                 <div>
                     <Feed>
-                        <RealDataPostCard profilePicture={"https://www.lance.com.br/files/article_main/uploads/2022/07/02/62c0dbbed1a02.jpeg"} username={"Gabi"} postText={"Guardei dois ontem"} url={"https://en.wikipedia.org/wiki/Gabriel_Barbosa"} />
+                        {userPosts.length > 0 ? renderUserPosts() : <h4>Este usuário ainda não tem nenhum post...</h4> }
                     </Feed>
                     {/* <TrendingHashtags /> */}
+                    <Trending />
                 </div>
             </Container>
         </>
@@ -56,19 +63,47 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    
+    > div:last-child {
+        width: 70%;
+        display: flex;
+        justify-content: center;
+    }
+
+    @media (max-width: 700px){
+        > div:last-child {
+            width: 100%;
+        }
+
+    }
 `;
 
 const Feed = styled.div`
     width: 62%;
-    height: 200px;
+
+    h4{
+        font-family: 'Oswald';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 30px;
+        line-height: 64px;
+        color: #FFFFFF;
+    }
 
     @media (max-width: 700px){
         width: 100%;
+        display: flex;
+        flex-direction:column;
+        justify-content: center;
+
+        h4{
+            margin-left: 4%;
+        }
     }
 `;
 
 const UserInfo = styled.div`
-    width: 50%;
+    width: 90%;
 
     margin-top: 50px;
     margin-bottom: 30px;
@@ -82,7 +117,6 @@ const UserInfo = styled.div`
     line-height: 64px;
     color: #FFFFFF;
 
-
     img{
         width: 50px;
         height: 50px;
@@ -94,6 +128,18 @@ const UserInfo = styled.div`
 
     @media (max-width: 700px){
         width: 100%;
-        justify-content: center;
+        padding-left: 3%;
+        justify-content: flex-start;
+    }
+`;
+
+const Trending = styled.div`
+    width: 301px;
+    height: 406px;
+    background-color: black;
+    border-radius: 16px;
+
+    @media (max-width: 800px){
+        display: none;
     }
 `;
