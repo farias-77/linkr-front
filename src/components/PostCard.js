@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function PostCard({ user, post }){
+export default function PostCard({ user, post, refresh, setRefresh }){
     const navigate = useNavigate();
 
     const userUsername = window.localStorage.getItem("username");
@@ -100,8 +100,11 @@ export default function PostCard({ user, post }){
                 "Authorization": `Bearer ${token}`
             }
         }
-        const promise = axios.delete(url, config);
-        toggleShowDeleteModal();
+        const promise = axios.delete(url, config);      
+        promise.then(() => {
+            toggleShowDeleteModal();
+            setRefresh(refresh+1);
+        });
     }
 
     return (

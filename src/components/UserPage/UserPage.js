@@ -9,10 +9,12 @@ import axios from "axios";
 export default function UserPage(){
     
     const [ userPosts, setUserPosts ] = useState([]);
-    const [ userInfo, setUserInfo ] = useState({username: "", profilePicture: ""})
+    const [ userInfo, setUserInfo ] = useState({username: "", profilePicture: ""});
+    const [ refresh, setRefresh ] = useState(0);
     const { id } = useParams();
 
     useEffect(() => {
+        console.log(refresh)
         const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
@@ -30,10 +32,10 @@ export default function UserPage(){
         promise.catch((res) => {
             console.log(res.data);
         })
-    }, [id]);
+    }, [id, refresh]);
 
     function renderUserPosts(){
-        return userPosts.map((post,index) => { return <PostCard key={index} user={userInfo} post={post} /> });
+        return userPosts.map((post,index) => { return <PostCard key={index} user={userInfo} post={post} refresh={refresh} setRefresh={setRefresh} /> });
     }
 
     return (
