@@ -26,7 +26,7 @@ export default function SignUp () {
         promise.catch((err) => {
             setDisable(false);
             if(err.response.status === 409) {
-                alert("Email já cadastrado!");
+                alert(err.response.data);
             }
             if(err.response.status === 500) {
                 alert("Erro no servidor!");
