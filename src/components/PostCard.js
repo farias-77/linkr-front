@@ -1,5 +1,5 @@
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoTrash } from "react-icons/io5"; 
 import { ImPencil } from "react-icons/im";
 import ReactTooltip from "react-tooltip";
@@ -119,7 +119,7 @@ export default function PostCard({ user, post, refresh, setRefresh }){
 
             <PostContent>
                     <div>
-                        <h4>{user.username}</h4>
+                        <h4 onClick={()=>{navigate(`/user/${post.userId}`)}}>{user.username}</h4>
                         <div>
                             <ImPencil/>
                             <IoTrash onClick={toggleShowDeleteModal}/>
@@ -322,6 +322,8 @@ function InteractableText({text,navigateToHashtag}){
     return(
         <>
             {
+                text === null ? <></> :
+
                 text.split(' ').map((word,index) => 
                 {
                     return (
