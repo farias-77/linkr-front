@@ -4,11 +4,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import Header from "../Header/Header.js";
-import RealDataPostCard from "../RealDataPostCard.js";
+import PostCard from "../PostCard.js";
 
 export default function HashtagPage(){
     const { hashtag } = useParams();
-    const [ hashtagPosts, setHashtagPosts ] = useState([]);
+    const [ hashtagPosts, setHashtagPosts ] = useState(false);
     const [ refresh, setRefresh ] = useState(0);
 
     useEffect(() => {
@@ -30,6 +30,8 @@ export default function HashtagPage(){
             alert(res.data);
         })
     }, [hashtag,refresh]);
+
+    console.log(hashtagPosts)
     return (
         <>
             <Header />
@@ -38,14 +40,13 @@ export default function HashtagPage(){
                     <h2># {hashtag}</h2>
                 </UserInfo>
                 <div>
-                    {/* <Feed>
+                    <Feed>
                         {
-                            (hashtagPosts.length === 0) ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
+                            !hashtagPosts ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
                             hashtagPosts.map((value,index)=>
-                            <RealDataPostCard key={index} userId={value.userId} username={value.username} profilePicture={value.profilePicture} postText={value.postText} postId={value.postId} url={value.url} numLikes={value.numLikes} whoLiked={value.whoLiked}
-                            refresh={refresh} setRefresh={setRefresh}/>)
+                            <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
                         }
-                    </Feed> */}
+                    </Feed>
                 </div>
             </Container>
         </>
