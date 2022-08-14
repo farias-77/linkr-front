@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactTooltip from "react-tooltip";
 
-export default function RealDataPostCard({userId, profilePicture,username,postText,postId,url,numLikes,whoLiked,refresh,setRefresh}){
+export default function RealDataPostCard({ user, post }){
     
     const navigate = useNavigate();
 
@@ -17,6 +17,7 @@ export default function RealDataPostCard({userId, profilePicture,username,postTe
             navigate(`/hashtag/${hashtag}`);
         }
     }
+
     async function likeOrDislike(postId){
         const url = `https://projeto-17-linkr.herokuapp.com/like/${postId}`;
         let token = window.localStorage.getItem("user_data");
@@ -28,34 +29,33 @@ export default function RealDataPostCard({userId, profilePicture,username,postTe
         }
         const body ={}
         await axios.post(url, body, config);
-        setRefresh(refresh+1);        
+        // setRefresh(refresh+1);        
     }
     
-    const userUsername = "Dimitri";
     let isLiked;
-    if(whoLiked.length === 0){
+    if(post.whoLiked.length === 0){
         isLiked = false;
     }else{
-        isLiked = whoLiked.includes(userUsername);
+        isLiked = post.whoLiked.includes(user.username);
     }
     
     return (
         <Container>
             <PostInfo>
-                <img src={profilePicture} alt="profile" />
-                <InteractableLike isLiked={isLiked} postId={postId} likeOrDislike={likeOrDislike} whoLiked={whoLiked} numLikes={numLikes}/>
-                <h4>{numLikes} likes</h4>
+                <img src={user.profilePicture} alt="profile" />
+                <InteractableLike isLiked={isLiked} postId={post.postId} likeOrDislike={likeOrDislike} whoLiked={post.whoLiked} numLikes={post.numLikes}/>
+                <h4>{post.numLikes} likes</h4>
             </PostInfo>
             <PostContent>
                 <PostCardHeader>
-                    <h4 onClick={()=>{navigate(`/user/${userId}`)}}>{username}</h4>
+                    <h4 onClick={()=>{navigate(`/user/${post.userId}`)}}>{user.username}</h4>
                     <div>
                         <ImPencil />
                         <IoTrash />
                     </div>
                 </PostCardHeader>
-                <InteractableText text={postText} navigateToHashtag={navigateToHashtag}/>
-                <p>{url}</p>
+                <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
+                <p>{post.url}</p>
             </PostContent>
         </Container>
     )

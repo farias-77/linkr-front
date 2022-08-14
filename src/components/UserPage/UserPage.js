@@ -1,5 +1,5 @@
 import TrendingHashtags from "../TrendingHashtags.js";
-import RealDataPostCard from "../RealDataPostCard.js";
+import PostCard from "../PostCard.js";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Header from "../Header/Header.js";
@@ -9,10 +9,12 @@ import axios from "axios";
 export default function UserPage(){
     
     const [ userPosts, setUserPosts ] = useState([]);
-    const [ userInfo, setUserInfo ] = useState({username: "", profilePicture: ""})
+    const [ userInfo, setUserInfo ] = useState({username: "", profilePicture: ""});
+    const [ refresh, setRefresh ] = useState(0);
     const { id } = useParams();
 
     useEffect(() => {
+        console.log(refresh)
         const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
@@ -30,10 +32,10 @@ export default function UserPage(){
         promise.catch((res) => {
             console.log(res.data);
         })
-    }, [id]);
+    }, [id, refresh]);
 
     function renderUserPosts(){
-        return userPosts.map((post,index) => { return <RealDataPostCard key={index} profilePicture={userInfo.profilePicture} username={userInfo.username} postText={post.postText} url={post.url} /> });
+        return userPosts.map((post,index) => { return <PostCard key={index} user={userInfo} post={post} refresh={refresh} setRefresh={setRefresh} /> });
     }
 
     return (
@@ -49,7 +51,7 @@ export default function UserPage(){
                         {userPosts.length > 0 ? renderUserPosts() : <h4>Este usuário ainda não tem nenhum post...</h4> }
                     </Feed>
                     {/* <TrendingHashtags /> */}
-                    <Trending />
+                    {/* <Trending /> */}
                 </div>
             </Container>
         </>
