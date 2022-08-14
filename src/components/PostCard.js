@@ -178,7 +178,7 @@ const Container = styled.div`
 
     margin-bottom: 20px;
 
-    @media (max-width: 800px){
+    @media (max-width: 900px){
         width: 100%;
         border-radius: 0;
     }
@@ -217,7 +217,7 @@ const PictureAndLike = styled.div`
         color: #FFFFFF;
     }
 
-    @media (max-width: 800px){
+    @media (max-width: 900px){
         p{
             line-height: 18px;
         }
@@ -335,7 +335,7 @@ const UrlPreview = styled.div`
         box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
     }
 
-    @media (max-width: 800px) {
+    @media (max-width: 900px) {
         height: 70%;
 
         > div{

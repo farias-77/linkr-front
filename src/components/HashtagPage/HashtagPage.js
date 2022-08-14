@@ -57,39 +57,49 @@ export default function HashtagPage(){
 
 
 const Container = styled.div`
-    margin-top: 72px;
-
+    margin-top: 100px;           
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    >div{
-        width: 50%;
+    
+    > div {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+    }
+    @media (max-width: 900px){
+        > div {
+            width: 100%;
+        }
     }
 `;
 
 const Feed = styled.div`
     width: 62%;
-    height: 200px;
+    margin-right: 30px;
 
-    >p{
-        font-family: 'Oswald', sans-serif;
+    h4{
+        font-family: 'Oswald';
+        font-style: normal;
         font-weight: 700;
-        font-size: 43px;
+        font-size: 30px;
         line-height: 64px;
-        text-align: center;
         color: #FFFFFF;
+    }
+
+    @media (max-width: 900px){
+        width: 100%;
+        display: flex;
+        flex-direction:column;
+        justify-content: center;
+        margin: 0;
     }
 `;
 
 const UserInfo = styled.div`
     margin-top: 50px;
     margin-bottom: 30px;
-
     display: flex;
     align-items: center;
     
@@ -98,8 +108,6 @@ const UserInfo = styled.div`
     font-size: 43px;
     line-height: 64px;
     color: #FFFFFF;
-
-
     img{
         width: 50px;
         height: 50px;
@@ -107,6 +115,11 @@ const UserInfo = styled.div`
         border-radius: 26.5px;
         object-fit: cover;
         margin-right: 20px;
+    }
+
+    @media (max-width: 900px){
+        font-size: 33px;
+        margin-left: 15px;
     }
 `;
 

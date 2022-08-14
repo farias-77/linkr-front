@@ -72,7 +72,7 @@ const Container = styled.div`
         flex-direction: column;
         align-items: flex-start;
     }
-    @media (max-width: 700px){
+    @media (max-width: 900px){
         > div {
             width: 100%;
         }
@@ -91,15 +91,13 @@ const Feed = styled.div`
         line-height: 64px;
         color: #FFFFFF;
     }
-    @media (max-width: 800px){
+
+    @media (max-width: 900px){
         width: 100%;
         display: flex;
         flex-direction:column;
         justify-content: center;
         margin: 0;
-        h4{
-            margin-left: 4%;
-        }
     }
 `;
 
@@ -123,8 +121,9 @@ const UserInfo = styled.div`
         margin-right: 20px;
     }
 
-    @media (max-width: 800px){
+    @media (max-width: 900px){
         font-size: 33px;
+        margin-left: 15px;
     }
 `;
 
