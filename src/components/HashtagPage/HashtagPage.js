@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import TrendingHashtags from "../TrendingHashtags.js";
 import Header from "../Header/Header.js";
 import PostCard from "../PostCard.js";
 
@@ -31,57 +31,75 @@ export default function HashtagPage(){
         })
     }, [hashtag,refresh]);
 
-    console.log(hashtagPosts)
     return (
         <>
             <Header />
             <Container>
-                <UserInfo>
-                    <h2># {hashtag}</h2>
-                </UserInfo>
                 <div>
-                    <Feed>
-                        {
-                            !hashtagPosts ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
-                            hashtagPosts.map((value,index)=>
-                            <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
-                        }
-                    </Feed>
+                    <UserInfo>
+                        <h2># {hashtag}</h2>
+                    </UserInfo>
+                    <PageContent>
+                        <Feed>
+                            {
+                                !hashtagPosts ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
+                                hashtagPosts.map((value,index)=>
+                                <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                            }
+                        </Feed>
+                        <TrendingHashtags />
+                    </PageContent>
                 </div>
             </Container>
         </>
     )
 }
 
-const Container = styled.div`
-    margin-top: 72px;
 
+const Container = styled.div`
+    margin-top: 100px;           
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    
+    > div {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    @media (max-width: 900px){
+        > div {
+            width: 100%;
+        }
+    }
 `;
 
 const Feed = styled.div`
     width: 62%;
-    height: 200px;
+    margin-right: 30px;
 
-    >p{
-        font-family: 'Oswald', sans-serif;
+    h4{
+        font-family: 'Oswald';
+        font-style: normal;
         font-weight: 700;
-        font-size: 43px;
+        font-size: 30px;
         line-height: 64px;
-        text-align: center;
         color: #FFFFFF;
+    }
+
+    @media (max-width: 900px){
+        width: 100%;
+        display: flex;
+        flex-direction:column;
+        justify-content: center;
+        margin: 0;
     }
 `;
 
 const UserInfo = styled.div`
-    width: 50%;
-
     margin-top: 50px;
     margin-bottom: 30px;
-
     display: flex;
     align-items: center;
     
@@ -90,8 +108,6 @@ const UserInfo = styled.div`
     font-size: 43px;
     line-height: 64px;
     color: #FFFFFF;
-
-
     img{
         width: 50px;
         height: 50px;
@@ -100,4 +116,16 @@ const UserInfo = styled.div`
         object-fit: cover;
         margin-right: 20px;
     }
+
+    @media (max-width: 900px){
+        font-size: 33px;
+        margin-left: 15px;
+    }
+`;
+
+const PageContent = styled.div`
+    display: flex;
+    
+    width: 100%;
+    justify-content: space-between;
 `;

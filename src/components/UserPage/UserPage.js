@@ -14,7 +14,6 @@ export default function UserPage(){
     const { id } = useParams();
 
     useEffect(() => {
-        console.log(refresh)
         const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
@@ -38,20 +37,23 @@ export default function UserPage(){
         return userPosts.map((post,index) => { return <PostCard key={index} user={userInfo} post={post} refresh={refresh} setRefresh={setRefresh} /> });
     }
 
+    console.log(userPosts)
+
     return (
         <>
             <Header />
-            <Container>
-                <UserInfo>
-                    <img src={userInfo.profilePicture} alt="profile" />
-                    <h2>{userInfo.username} 's posts</h2>
-                </UserInfo>
+            <Container>  
                 <div>
-                    <Feed>
-                        {userPosts.length > 0 ? renderUserPosts() : <h4>Este usuário ainda não tem nenhum post...</h4> }
-                    </Feed>
-                    {/* <TrendingHashtags /> */}
-                    {/* <Trending /> */}
+                    <UserInfo>
+                        <img src={userInfo.profilePicture} alt="profile" />
+                        <h2>{userInfo.username} 's posts</h2>
+                    </UserInfo>
+                    <PageContent>
+                        <Feed>
+                            {userPosts.length > 0 ? renderUserPosts() : <h4>Este usuário ainda não tem nenhum post...</h4> }
+                        </Feed>
+                        <TrendingHashtags />
+                    </PageContent>
                 </div>
             </Container>
         </>
@@ -65,13 +67,13 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     
-    > div:last-child {
-        width: 70%;
+    > div {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        align-items: flex-start;
     }
-    @media (max-width: 700px){
-        > div:last-child {
+    @media (max-width: 900px){
+        > div {
             width: 100%;
         }
     }
@@ -79,6 +81,8 @@ const Container = styled.div`
 
 const Feed = styled.div`
     width: 62%;
+    margin-right: 30px;
+
     h4{
         font-family: 'Oswald';
         font-style: normal;
@@ -87,19 +91,17 @@ const Feed = styled.div`
         line-height: 64px;
         color: #FFFFFF;
     }
-    @media (max-width: 700px){
+
+    @media (max-width: 900px){
         width: 100%;
         display: flex;
         flex-direction:column;
         justify-content: center;
-        h4{
-            margin-left: 4%;
-        }
+        margin: 0;
     }
 `;
 
 const UserInfo = styled.div`
-    width: 90%;
     margin-top: 50px;
     margin-bottom: 30px;
     display: flex;
@@ -118,19 +120,16 @@ const UserInfo = styled.div`
         object-fit: cover;
         margin-right: 20px;
     }
-    @media (max-width: 700px){
-        width: 100%;
-        padding-left: 3%;
-        justify-content: flex-start;
+
+    @media (max-width: 900px){
+        font-size: 33px;
+        margin-left: 15px;
     }
 `;
 
-const Trending = styled.div`
-    width: 301px;
-    height: 406px;
-    background-color: black;
-    border-radius: 16px;
-    @media (max-width: 800px){
-        display: none;
-    }
+const PageContent = styled.div`
+    display: flex;
+    
+    width: 100%;
+    justify-content: space-between;
 `;
