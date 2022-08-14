@@ -21,8 +21,20 @@ export default function PostCard({ user, post, refresh, setRefresh }){
         }else{
             setLiked(false);
         }
-
-        setLikeCount(post.whoLiked.length);
+        
+        const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
+        promise.then((res) => {
+            setLikeCount(res.data.length);
+            post.whoLiked = res.data;
+        })
     }, [])
 
     function toggleLike(){
@@ -120,10 +132,14 @@ export default function PostCard({ user, post, refresh, setRefresh }){
             <PostContent>
                     <div>
                         <h4>{user.username}</h4>
-                        <div>
-                            <ImPencil/>
-                            <IoTrash onClick={toggleShowDeleteModal}/>
-                        </div>
+                        {user.username === window.localStorage.getItem("username") ?
+                            <div>
+                                <ImPencil/>
+                                <IoTrash onClick={toggleShowDeleteModal}/>
+                            </div>
+                            :
+                            <></>
+                        }
                     </div>
                     <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
                     <a href={post.url} target="_blank">

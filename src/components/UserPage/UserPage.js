@@ -14,7 +14,6 @@ export default function UserPage(){
     const { id } = useParams();
 
     useEffect(() => {
-        console.log(refresh)
         const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
@@ -37,6 +36,8 @@ export default function UserPage(){
     function renderUserPosts(){
         return userPosts.map((post,index) => { return <PostCard key={index} user={userInfo} post={post} refresh={refresh} setRefresh={setRefresh} /> });
     }
+
+    console.log(userPosts)
 
     return (
         <>
