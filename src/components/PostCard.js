@@ -13,6 +13,7 @@ export default function PostCard({ user, post }){
     const userUsername = window.localStorage.getItem("username");
     const [ liked, setLiked ] = useState();
     const [ likeCount, setLikeCount ] = useState();
+    const [ displayDeleteModal, setDisplayDeleteModal] = useState("display: none;");
 
     useEffect(() => {
         if(post.whoLiked.includes(userUsername)){
@@ -82,34 +83,67 @@ export default function PostCard({ user, post }){
         }
     }
 
-    return (
-        <Container>
-           <PictureAndLike>
-               <img src={user.profilePicture} alt="profile" />
-               {liked ? <IoIosHeart color="#AC0000" onClick={toggleLike}/> : <IoIosHeartEmpty color="#FFFFFF" onClick={toggleLike}/>}
-               <p data-tip={(liked ? userLiked() : userDLiked())}>{likeCount} likes</p>
-               <ReactTooltip />
-           </PictureAndLike>
+    function toggleShowDeleteModal(){
+        if(displayDeleteModal === "display: flex;"){
+            setDisplayDeleteModal("display: none;");
+        }else{
+            setDisplayDeleteModal("display: flex;");
+        }
+    }
 
-           <PostContent>
+    function deletePost(){
+        const url = `https://projeto-17-linkr.herokuapp.com/delete-post/${post.postId}`
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.delete(url, config);
+        toggleShowDeleteModal();
+    }
+
+    return (
+        <>
+            <Container>
+            <PictureAndLike>
+                <img src={user.profilePicture} alt="profile" />
+                {liked ? <IoIosHeart color="#AC0000" onClick={toggleLike}/> : <IoIosHeartEmpty color="#FFFFFF" onClick={toggleLike}/>}
+                <p data-tip={(liked ? userLiked() : userDLiked())}>{likeCount} likes</p>
+                <ReactTooltip />
+            </PictureAndLike>
+
+            <PostContent>
+                    <div>
+                        <h4>{user.username}</h4>
+                        <div>
+                            <ImPencil/>
+                            <IoTrash onClick={toggleShowDeleteModal}/>
+                        </div>
+                    </div>
+                    <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
+                    <a href={post.url} target="_blank">
+                        <UrlPreview>
+                            <div>
+                                <h3>{post.title}</h3>
+                                <h4>{post.description}</h4>
+                                <h5>{post.url}</h5>
+                            </div>
+                            <img src={post.image} alt="metadata image" />
+                        </UrlPreview>
+                    </a>
+            </PostContent>
+            </Container>
+            <DeleteModal display={displayDeleteModal}>
+                <p>Are you sure you want<br/>to delete this post?</p>
                 <div>
-                    <h4>{user.username}</h4>
-                    <div>
-                        <ImPencil/>
-                        <IoTrash />
-                    </div>
+                    <Button color="#FFFFFF" background="#1877F2" onClick={toggleShowDeleteModal}>No, go back</Button>
+                    <Button color="#1877F2" background="#FFFFFF" onClick={deletePost}>Yes, delete it</Button>
                 </div>
-                <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
-                <UrlPreview>
-                    <div>
-                        <h3>{post.title}</h3>
-                        <h4>{post.description}</h4>
-                        <h5>{post.url}</h5>
-                    </div>
-                    <img src={post.image} alt="metadata image" />
-                </UrlPreview>
-           </PostContent>
-        </Container>
+            </DeleteModal>
+            <WhiteBackground display={displayDeleteModal}/>
+        </>
     )
 }
 
@@ -122,6 +156,8 @@ const Container = styled.div`
     padding: 20px 17px;
 
     display: flex;
+
+    margin-bottom: 20px;
 `;
 
 const PictureAndLike = styled.div`
@@ -178,6 +214,7 @@ const PostContent = styled.div`
             font-size: 20px;
             color: white;
             margin-left: 9px;
+            cursor: pointer;
         }
     }
 
@@ -210,6 +247,8 @@ const UrlPreview = styled.div`
     border: 1px solid #4D4D4D;
     border-radius: 11px;
     margin-top: 20px;
+
+    display: flex;
 
     img{
         width: 30%;
@@ -259,6 +298,10 @@ const UrlPreview = styled.div`
             color: #CECECE;
         }
     }
+
+    &:hover{
+        box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+    }
 `;
 
 function InteractableText({text,navigateToHashtag}){
@@ -282,7 +325,7 @@ function InteractableText({text,navigateToHashtag}){
                         <>
                             {
                                 isHashtag(word) ? 
-                                <span style={{fontWeight:700}} key={index} onClick={() => navigateToHashtag(word)}>{word}&nbsp;</span>
+                                <span key={index} style={{fontWeight:700}} onClick={() => navigateToHashtag(word)}>{word}&nbsp;</span>
                                 :
                                 <p key={index}>{word}&nbsp;</p>
                             }
@@ -293,3 +336,73 @@ function InteractableText({text,navigateToHashtag}){
         </>
     )
 } 
+
+const WhiteBackground = styled.div`
+    ${props => props.display}
+    
+    position: fixed;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 3;
+`;
+
+const DeleteModal = styled.div`
+    ${props => props.display}
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    z-index: 4;
+
+    width: 597px;
+    height: 262px;
+
+    position: fixed;
+    top: 30%;
+    right: 40%;
+
+    background-color: #333333;
+    border-radius: 50px;
+
+    p{
+        font-family: 'Lato';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 34px;
+        line-height: 41px;
+        text-align: center;
+
+        color: #FFFFFF;
+    }
+
+    > div {
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        margin-top: 45px;
+    }
+`;
+
+const Button = styled.div`
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+
+    width: 134px;
+    height: 37px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    border-radius: 5px;
+    background-color: ${props => props.background};
+    color: ${props => props.color};
+
+    cursor: pointer;
+`;
