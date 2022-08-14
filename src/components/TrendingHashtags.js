@@ -89,7 +89,7 @@ const Container = styled.div`
 
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 800px) {
         display: none;
     }
 `;

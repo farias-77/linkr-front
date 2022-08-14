@@ -153,7 +153,7 @@ const Container = styled.div`
     left: 0;
     width: 100%;
 
-    @media (max-width: 700px){
+    @media (max-width: 800px){
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -182,7 +182,7 @@ const HeaderDesktopContainer = styled.div`
 
     background-color: #151515;
 
-    @media (max-width: 700px){
+    @media (max-width: 800px){
         display: none;
     }
 `;
@@ -212,7 +212,7 @@ const SearchControl = styled.div`
         }
     }
 
-    @media (max-width: 700px){
+    @media (max-width: 800px){
         width: 100%;
         margin-top: 10px;
         padding: 0 3%;
@@ -292,7 +292,7 @@ const SearchOptions = styled.div`
     position: absolute;
     top: 38px;
 
-    @media(max-width: 700px){
+    @media(max-width: 800px){
         width: 99%;
         position: static;
     }
@@ -301,7 +301,7 @@ const SearchOptions = styled.div`
 const HeaderMobileContainer = styled.div`
     display: none;
 
-    @media (max-width: 700px){
+    @media (max-width: 800px){
         display: flex;
         flex-direction: column;
 

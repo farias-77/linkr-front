@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import TrendingHashtags from "../TrendingHashtags.js";
 import Header from "../Header/Header.js";
 import PostCard from "../PostCard.js";
 
@@ -31,27 +31,30 @@ export default function HashtagPage(){
         })
     }, [hashtag,refresh]);
 
-    console.log(hashtagPosts)
     return (
         <>
             <Header />
             <Container>
-                <UserInfo>
-                    <h2># {hashtag}</h2>
-                </UserInfo>
                 <div>
-                    <Feed>
-                        {
-                            !hashtagPosts ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
-                            hashtagPosts.map((value,index)=>
-                            <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
-                        }
-                    </Feed>
+                    <UserInfo>
+                        <h2># {hashtag}</h2>
+                    </UserInfo>
+                    <PageContent>
+                        <Feed>
+                            {
+                                !hashtagPosts ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
+                                hashtagPosts.map((value,index)=>
+                                <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                            }
+                        </Feed>
+                        <TrendingHashtags />
+                    </PageContent>
                 </div>
             </Container>
         </>
     )
 }
+
 
 const Container = styled.div`
     margin-top: 72px;
@@ -60,6 +63,13 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    >div{
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
 `;
 
 const Feed = styled.div`
@@ -77,8 +87,6 @@ const Feed = styled.div`
 `;
 
 const UserInfo = styled.div`
-    width: 50%;
-
     margin-top: 50px;
     margin-bottom: 30px;
 
@@ -100,4 +108,11 @@ const UserInfo = styled.div`
         object-fit: cover;
         margin-right: 20px;
     }
+`;
+
+const PageContent = styled.div`
+    display: flex;
+    
+    width: 100%;
+    justify-content: space-between;
 `;

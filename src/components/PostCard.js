@@ -122,37 +122,37 @@ export default function PostCard({ user, post, refresh, setRefresh }){
     return (
         <>
             <Container>
-            <PictureAndLike>
-                <img src={user.profilePicture} alt="profile" />
-                {liked ? <IoIosHeart color="#AC0000" onClick={toggleLike}/> : <IoIosHeartEmpty color="#FFFFFF" onClick={toggleLike}/>}
-                <p data-tip={(liked ? userLiked() : userDLiked())}>{likeCount} likes</p>
-                <ReactTooltip />
-            </PictureAndLike>
+                <PictureAndLike>
+                    <img src={user.profilePicture} alt="profile" />
+                    {liked ? <IoIosHeart color="#AC0000" onClick={toggleLike}/> : <IoIosHeartEmpty color="#FFFFFF" onClick={toggleLike}/>}
+                    <p data-tip={(liked ? userLiked() : userDLiked())}>{likeCount} likes</p>
+                    <ReactTooltip />
+                </PictureAndLike>
 
-            <PostContent>
-                    <div>
-                        <h4 onClick={()=>{navigate(`/user/${post.userId}`)}}>{user.username}</h4>
-                        {user.username === window.localStorage.getItem("username") ?
-                            <div>
-                                <ImPencil/>
-                                <IoTrash onClick={toggleShowDeleteModal}/>
-                            </div>
-                            :
-                            <></>
-                        }
-                    </div>
-                    <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
-                    <a href={post.url} target="_blank">
-                        <UrlPreview>
-                            <div>
-                                <h3>{post.title}</h3>
-                                <h4>{post.description}</h4>
-                                <h5>{post.url}</h5>
-                            </div>
-                            <img src={post.image} alt="metadata image" />
-                        </UrlPreview>
-                    </a>
-            </PostContent>
+                <PostContent>
+                        <div>
+                            <h4 onClick={()=>{navigate(`/user/${post.userId}`)}}>{user.username}</h4>
+                            {user.username === window.localStorage.getItem("username") ?
+                                <div>
+                                    <ImPencil/>
+                                    <IoTrash onClick={toggleShowDeleteModal}/>
+                                </div>
+                                :
+                                <></>
+                            }
+                        </div>
+                        <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
+                        <a href={post.url} target="_blank">
+                            <UrlPreview>
+                                <div>
+                                    <h3>{post.title}</h3>
+                                    <h4>{post.description}</h4>
+                                    <h5>{post.url}</h5>
+                                </div>
+                                <img src={post.image} alt="metadata image" />
+                            </UrlPreview>
+                        </a>
+                </PostContent>
             </Container>
             <DeleteModal display={displayDeleteModal}>
                 <p>Are you sure you want<br/>to delete this post?</p>
@@ -177,6 +177,11 @@ const Container = styled.div`
     display: flex;
 
     margin-bottom: 20px;
+
+    @media (max-width: 800px){
+        width: 100%;
+        border-radius: 0;
+    }
 `;
 
 const PictureAndLike = styled.div`
@@ -210,6 +215,13 @@ const PictureAndLike = styled.div`
         line-height: 13px;
         text-align: center;
         color: #FFFFFF;
+    }
+
+    @media (max-width: 800px){
+        p{
+            line-height: 18px;
+        }
+
     }
 `;
 
@@ -321,6 +333,14 @@ const UrlPreview = styled.div`
 
     &:hover{
         box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+    }
+
+    @media (max-width: 800px) {
+        height: 70%;
+
+        > div{
+            padding-left: 10px;
+        }
     }
 `;
 
