@@ -42,7 +42,7 @@ export default function HashtagPage(){
                     <PageContent>
                         <Feed>
                             {
-                                hashtagPosts.length === 0 ? <h4>Ainda não existem posts com essa hashtag, seja o primeiro.</h4> :
+                                hashtagPosts.length === 0 ? <h4>Ainda não existem posts com essa hashtag,rt seja o primeiro.</h4> :
                                 hashtagPosts.map((value,index)=>
                                 <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
                             }
