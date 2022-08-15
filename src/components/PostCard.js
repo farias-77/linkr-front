@@ -128,6 +128,7 @@ export default function PostCard({ user, post, refresh, setRefresh }){
         });
 
         promise.catch(() => {
+            toggleShowDeleteModal();
             alert("Não foi possível deletar o post :(");
         })
     }
