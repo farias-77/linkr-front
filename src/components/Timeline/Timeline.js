@@ -36,7 +36,7 @@ export default function Timeline(){
     }, []);
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/timeline`;
+        const url = `http://localhost:5000/timeline`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -52,7 +52,8 @@ export default function Timeline(){
         });
 
         promise.catch((res) => {
-            setLoading("erro");
+            console.log("erro")
+            setLoading(0);
         })
     }, [refresh]);
 
@@ -101,7 +102,7 @@ export default function Timeline(){
                                         ariaLabel='loading'
                                         />
                                 :
-                                loading === "erro" ? <p>An error ocurred while trying to fetch the posts, please refresh the page.</p>
+                                loading === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>An error ocurred while trying to fetch the posts, please refresh the page.</p>
                                 :
                                 <Posts posts={posts} refresh={refresh} setRefresh={setRefresh}/>
                             }
@@ -118,7 +119,7 @@ function Posts({posts, refresh, setRefresh}){
 return(
     <>
         {
-            !posts ? <p>There are no posts yet.</p> :
+            posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
             posts.map((value,index)=>
             <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
         }
