@@ -3,7 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-export default function TrendignHashtags(){
+export default function TrendignHashtags({refresh}){
 
     const [trendignHashtags, setTrendingHashtags] = useState([]);
     
@@ -25,7 +25,7 @@ export default function TrendignHashtags(){
         promise.catch((res) => {
             console.log(res.data);
         })
-    }, []);
+    }, [refresh]);
 
     return (
         <Container>
