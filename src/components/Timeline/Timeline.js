@@ -59,6 +59,7 @@ export default function Timeline(){
 
     function createPost(event){
         event.preventDefault();
+        
         setPending(true);
         const body = {
             url,
@@ -83,6 +84,7 @@ export default function Timeline(){
             alert("Houve um erro ao publicar seu link.");  
             })
     }
+
     return (
         <>
             <Header />
@@ -107,7 +109,7 @@ export default function Timeline(){
                                 <Posts posts={posts} refresh={refresh} setRefresh={setRefresh}/>
                             }
                         </Feed>
-                        <TrendingHashtags />
+                        <TrendingHashtags refresh={refresh}/>
                     </PageContent>
                 </div>
             </Container>
@@ -213,7 +215,11 @@ const BoxInput = styled.div`
         font-weight: 300;
         font-size: 15px;
         line-height: 18px;
-        color: #949494;
+        color: #000000;
+
+        ::placeholder{
+            color: #949494;
+        }
 
     }
     button{
@@ -231,6 +237,7 @@ const BoxInput = styled.div`
         line-height: 17px;
         color: #FFFFFF;
 
+        cursor: pointer;
     }
 
     @media (max-width: 900px){
@@ -257,7 +264,8 @@ font-weight: 300;
 font-size: 15px;
 line-height: 18px;
 color: #949494;
-`
+`;
+
 const Loading = styled.div`
 width: 20%;
 height: 31px;
@@ -275,7 +283,7 @@ font-weight: 700;
 font-size: 14px;
 line-height: 17px;
 color: #FFFFFF;
-`
+`;
 
 const Container = styled.div`
     margin-top: 100px;           

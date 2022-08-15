@@ -50,7 +50,7 @@ export default function UserPage(){
                         <Feed>
                             {userPosts.length > 0 ? renderUserPosts() : <h4>Este usuário ainda não tem nenhum post...</h4> }
                         </Feed>
-                        <TrendingHashtags />
+                        <TrendingHashtags refresh={refresh}/>
                     </PageContent>
                 </div>
             </Container>
