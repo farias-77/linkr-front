@@ -77,7 +77,10 @@ export default function Timeline(){
             setPending(false); 
             setUrl(""); 
             setText("")});
-        promise.catch(setPending(false))
+        promise.catch(()=>{
+            setPending(false); 
+            alert("Houve um erro ao publicar seu link.");  
+            })
     }
     return (
         <>
@@ -136,12 +139,7 @@ return(
                     <Loads style={{height:"30px",marginTop:"10px"}}>{url}</Loads>
                     <Loads>{text}</Loads> 
                     <Loading>
-                    <ThreeDots
-                        height="35"
-                        width="65"
-                        color='white'
-                        ariaLabel='loading'
-                    />
+                        Publishing...
                     </Loading>
                 </>
                 : 
@@ -268,6 +266,7 @@ border-radius: 5px;
 margin-left: 80%;
 display: flex;
 justify-content: center;
+align-items: center;
 
 font-family: 'Lato';
 font-style: normal;
