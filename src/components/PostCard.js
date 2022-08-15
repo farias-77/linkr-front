@@ -4,16 +4,19 @@ import { IoTrash } from "react-icons/io5";
 import { ImPencil } from "react-icons/im";
 import ReactTooltip from "react-tooltip";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 export default function PostCard({ user, post, refresh, setRefresh }){
     const navigate = useNavigate();
+    const inputRef = useRef();
 
     const userUsername = window.localStorage.getItem("username");
     const [ liked, setLiked ] = useState();
     const [ likeCount, setLikeCount ] = useState();
     const [ displayDeleteModal, setDisplayDeleteModal] = useState("display: none;");
+    const [ displayEditInput, setDisplayEditInput ] = useState(false);
+    const [ editInput, setEditInput ] = useState(post.postText);
 
     useEffect(() => {
         if(post.whoLiked.includes(userUsername)){
@@ -35,7 +38,13 @@ export default function PostCard({ user, post, refresh, setRefresh }){
             setLikeCount(res.data.length);
             post.whoLiked = res.data;
         })
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if(displayEditInput){
+            inputRef.current.focus();
+        }
+    }, [displayEditInput]);
 
     function toggleLike(){
         if(liked){
@@ -123,6 +132,51 @@ export default function PostCard({ user, post, refresh, setRefresh }){
         })
     }
 
+    function toggleEditInput(){
+        if(displayEditInput){
+            setDisplayEditInput(false);
+        }else{
+            setDisplayEditInput(true);
+        }
+    }
+
+    function changePostTextInDatabase(){
+        const url = `https://projeto-17-linkr.herokuapp.com/update/${post.postId}`;
+        const body = {
+            text: editInput
+        }
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.put(url, body, config);
+        promise.then(() => {
+            toggleEditInput();
+            setRefresh(refresh+1);
+        });
+        promise.catch(() => {
+            alert("Não foi possível editar o post, por favor tente novamente.");
+        });
+    }
+
+    function getKeyDown(e){
+        const keyDown = e.key;
+
+        if(keyDown === "Escape"){
+            toggleEditInput();
+            return;
+        }
+
+        if(keyDown === "Enter"){
+            changePostTextInDatabase();
+            return;
+        }
+    }
+    
+
     return (
         <>
             <Container>
@@ -138,14 +192,20 @@ export default function PostCard({ user, post, refresh, setRefresh }){
                             <h4 onClick={()=>{navigate(`/user/${post.userId}`)}}>{user.username}</h4>
                             {user.username === window.localStorage.getItem("username") ?
                                 <div>
-                                    <ImPencil/>
+                                    <ImPencil onClick={toggleEditInput}/>
                                     <IoTrash onClick={toggleShowDeleteModal}/>
                                 </div>
                                 :
                                 <></>
                             }
                         </div>
+
+                        { displayEditInput ?
+                        <input defaultValue={editInput} onKeyDown={getKeyDown} ref={inputRef} onChange={(e) => setEditInput(e.target.value)}/>
+                        :                    
                         <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
+                        }
+
                         <a href={post.url} target="_blank">
                             <UrlPreview>
                                 <div>
@@ -274,6 +334,14 @@ const PostContent = styled.div`
         margin-top: 30px;
 
         display: inline;
+    }
+
+    > input{
+        width: 503px;
+        height: 44px;
+
+        background: #FFFFFF;
+        border-radius: 7px;
     }
 `;
 

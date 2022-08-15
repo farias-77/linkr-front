@@ -31,7 +31,6 @@ export default function HashtagPage(){
         })
     }, [hashtag,refresh]);
 
-    console.log(hashtagPosts)
     return (
         <>
             <Header />
