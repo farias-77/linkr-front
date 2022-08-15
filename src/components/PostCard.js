@@ -1,5 +1,5 @@
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { IoTrash } from "react-icons/io5"; 
 import { ImPencil } from "react-icons/im";
 import ReactTooltip from "react-tooltip";
