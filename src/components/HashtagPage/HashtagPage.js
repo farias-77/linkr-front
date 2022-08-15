@@ -42,7 +42,7 @@ export default function HashtagPage(){
                     <PageContent>
                         <Feed>
                             {
-                                !hashtagPosts ? <p>Ainda não existem posts com essa hashtag seja o primeiro.</p> :
+                                hashtagPosts.length === 0 ? <h4>Ainda não existem posts com essa hashtag, seja o primeiro.</h4> :
                                 hashtagPosts.map((value,index)=>
                                 <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
                             }
@@ -86,6 +86,7 @@ const Feed = styled.div`
         font-size: 30px;
         line-height: 64px;
         color: #FFFFFF;
+        text-align: center;
     }
 
     @media (max-width: 900px){
