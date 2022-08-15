@@ -154,14 +154,15 @@ export default function PostCard({ user, post, refresh, setRefresh }){
                         </a>
                 </PostContent>
             </Container>
-            <DeleteModal display={displayDeleteModal}>
-                <p>Are you sure you want<br/>to delete this post?</p>
-                <div>
-                    <Button color="#FFFFFF" background="#1877F2" onClick={toggleShowDeleteModal}>No, go back</Button>
-                    <Button color="#1877F2" background="#FFFFFF" onClick={deletePost}>Yes, delete it</Button>
-                </div>
-            </DeleteModal>
-            <WhiteBackground display={displayDeleteModal}/>
+            <WhiteBackground display={displayDeleteModal}>
+                <DeleteModal>
+                    <p>Are you sure you want<br/>to delete this post?</p>
+                    <div>
+                        <Button color="#FFFFFF" background="#1877F2" onClick={toggleShowDeleteModal}>No, go back</Button>
+                        <Button color="#1877F2" background="#FFFFFF" onClick={deletePost}>Yes, delete it</Button>
+                    </div>
+                </DeleteModal>
+            </WhiteBackground>
         </>
     )
 }
@@ -389,10 +390,13 @@ const WhiteBackground = styled.div`
     right: 0;
     background-color: rgba(255, 255, 255, 0.5);
     z-index: 3;
+
+    justify-content: center;
+    align-items: center;
 `;
 
 const DeleteModal = styled.div`
-    ${props => props.display}
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -401,10 +405,6 @@ const DeleteModal = styled.div`
 
     width: 597px;
     height: 262px;
-
-    position: fixed;
-    top: 30%;
-    right: 40%;
 
     background-color: #333333;
     border-radius: 50px;
