@@ -37,8 +37,6 @@ export default function UserPage(){
         return userPosts.map((post,index) => { return <PostCard key={index} user={userInfo} post={post} refresh={refresh} setRefresh={setRefresh} /> });
     }
 
-    console.log(userPosts)
-
     return (
         <>
             <Header />
