@@ -80,7 +80,7 @@ export default function UserPage(){
                                 <Posts posts={userPosts} userInfo={userInfo} refresh={refresh} setRefresh={setRefresh} getMorePosts={getMorePosts} stop={stop}/>
                             }
                         </Feed>
-                        <TrendingHashtags />
+                        <TrendingHashtags refresh={refresh}/>
                     </PageContent>
                 </div>
             </Container>

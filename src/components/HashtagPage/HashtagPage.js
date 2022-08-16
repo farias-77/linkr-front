@@ -74,7 +74,7 @@ export default function HashtagPage(){
                                 <Posts posts={hashtagPosts} refresh={refresh} setRefresh={setRefresh} getMorePosts={getMorePosts} stop={stop}/>
                             }
                         </Feed>
-                        <TrendingHashtags />
+                        <TrendingHashtags refresh={refresh}/>
                     </PageContent>
                 </div>
             </Container>
