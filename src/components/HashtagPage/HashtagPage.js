@@ -2,17 +2,23 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ThreeDots } from  'react-loader-spinner';
+import InfiniteScroll from 'react-infinite-scroller';
+
 import TrendingHashtags from "../TrendingHashtags.js";
 import Header from "../Header/Header.js";
 import PostCard from "../PostCard.js";
 
 export default function HashtagPage(){
     const { hashtag } = useParams();
-    const [ hashtagPosts, setHashtagPosts ] = useState(false);
+    const [ hashtagPosts, setHashtagPosts ] = useState([]);
+    const [ firstHashtagPosts, setFirstHashtagPosts ] = useState([]);
+    const [ stop, setStop ] = useState(false);
     const [ refresh, setRefresh ] = useState(0);
+    const [ loading, setLoading ] = useState(true);
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}`;
+        const url = `http://localhost:5000/hashtag/${hashtag}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -23,7 +29,8 @@ export default function HashtagPage(){
         const promise = axios.get(url, config);
 
         promise.then((res) => {
-            setHashtagPosts(res.data);
+            setFirstHashtagPosts(res.data);
+            setLoading(false);
         });
 
         promise.catch((res) => {
@@ -31,6 +38,19 @@ export default function HashtagPage(){
         })
     }, [hashtag,refresh]);
 
+    useEffect(()=>{
+        getMorePosts(1);
+    },[firstHashtagPosts])
+
+    function getMorePosts(limit){
+        const realLimit = (limit)*10;
+        if(firstHashtagPosts.length !== 0){
+            if(realLimit - firstHashtagPosts.length >= 10){
+                setStop(true);
+            }
+        }
+        setHashtagPosts(firstHashtagPosts.slice(0,realLimit));
+    }
     return (
         <>
             <Header />
@@ -42,9 +62,16 @@ export default function HashtagPage(){
                     <PageContent>
                         <Feed>
                             {
-                                hashtagPosts.length === 0 ? <h4>Ainda não existem posts com essa hashtag, seja o primeiro.</h4> :
-                                hashtagPosts.map((value,index)=>
-                                <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                                loading ? <ThreeDots
+                                        height="200"
+                                        width="150"
+                                        color='white'
+                                        ariaLabel='loading'
+                                        />
+                                :
+                                loading === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>An error ocurred while trying to fetch the posts, please refresh the page.</p>
+                                :
+                                <Posts posts={hashtagPosts} refresh={refresh} setRefresh={setRefresh} getMorePosts={getMorePosts} stop={stop}/>
                             }
                         </Feed>
                         <TrendingHashtags />
@@ -53,6 +80,49 @@ export default function HashtagPage(){
             </Container>
         </>
     )
+}
+
+
+function Posts({posts, refresh, setRefresh, getMorePosts, stop}){
+    console.log(posts)
+    const scrollTop = () =>{
+        window.scrollTo({top: 0, behavior: 'smooth'});
+     };
+return(
+    <>
+        {
+            !stop ? 
+                <InfiniteScroll
+                pageStart={0}
+                loadMore={getMorePosts}
+                hasMore={true || false}
+                loader={<ThreeDots
+                    height="200"
+                    width="150"
+                    color='white'
+                    ariaLabel='loading'
+                    />}
+                >
+                {
+                    posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                    posts.map((value,index)=>
+                    <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                }
+                </InfiniteScroll>
+                :
+                <>
+                    {
+                        posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                        posts.map((value,index)=>
+                        <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                    }
+                    <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px"}}>Congratulations you saw it all!</p>
+                    <p onClick={scrollTop} style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px", cursor:"pointer"}}>Back to the top!</p>
+                </>
+        }
+        
+    </>
+)
 }
 
 

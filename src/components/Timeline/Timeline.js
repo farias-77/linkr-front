@@ -1,20 +1,29 @@
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ThreeDots } from  'react-loader-spinner';
+import InfiniteScroll from 'react-infinite-scroller';
+import useInterval from 'use-interval';
+import { IoIosRefresh } from "react-icons/io";
+
 import TrendingHashtags from "../TrendingHashtags.js";
 import Header from "../Header/Header.js";
 import PostCard from "../PostCard.js";
-import { ThreeDots } from  'react-loader-spinner'
 
 
 export default function Timeline(){
+    const [ firstPosts, setFirstPosts ] = useState([]);
+    const [ newPosts, setNewPosts ] = useState([]);
+    const [ hasNewPosts, setHasNewPosts ] = useState(false);
     const [ posts, setPosts ] = useState([]);
     const [ refresh, setRefresh ] = useState(0);
     const [ url, setUrl ] = useState("");
     const [ text, setText ] = useState("");
     const [ pending, setPending ] = useState(false);
+    const [ stop, setStop ] = useState(false);
     const [ loading, setLoading ] = useState(true);
     const [ userInfo, setUserInfo] = useState({username: "", profilePicture: ""});
+    const timer = 15000;
 
     useEffect(() => {
         const url = `https://projeto-17-linkr.herokuapp.com/userInfo`;
@@ -36,7 +45,7 @@ export default function Timeline(){
     }, []);
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/timeline`;
+        const url = `http://localhost:5000/timeline`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -47,7 +56,8 @@ export default function Timeline(){
         const promise = axios.get(url, config);
 
         promise.then((res) => {
-            setPosts(res.data);
+            setFirstPosts(res.data);
+            setHasNewPosts(false);
             setLoading(false);
         });
 
@@ -56,6 +66,40 @@ export default function Timeline(){
             setLoading(0);
         })
     }, [refresh]);
+
+    useInterval(()=>{
+        const url = `http://localhost:5000/timeline`;
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
+
+        promise.then((res) => {
+            setNewPosts(res.data);
+        });
+    },timer)
+
+    useEffect(()=>{
+        if(newPosts.length - firstPosts.length > 0){
+            setHasNewPosts(true);
+        }
+    },[newPosts])
+
+    useEffect(()=>{
+        getMorePosts(1);
+    },[firstPosts])
+
+    function getMorePosts(limit){
+        const realLimit = (limit)*10;
+        if(realLimit - firstPosts.length >= 10){
+            setStop(true);
+        }
+        setPosts(firstPosts.slice(0,realLimit));
+    }
 
     function createPost(event){
         event.preventDefault();
@@ -95,6 +139,9 @@ export default function Timeline(){
                         <Feed>
                             <InputBox img={userInfo.profilePicture} url={url} setUrl={setUrl} text={text} setText={setText} createPost={createPost} pending={pending}/>
                             {
+                                hasNewPosts ? <RefreshDiv number={newPosts.length - firstPosts.length} refresh={refresh} setRefresh={setRefresh} setHasNewPosts={setHasNewPosts}/> : <></>
+                            }
+                            {
                                 loading ? <ThreeDots
                                         height="200"
                                         width="150"
@@ -104,7 +151,7 @@ export default function Timeline(){
                                 :
                                 loading === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>An error ocurred while trying to fetch the posts, please refresh the page.</p>
                                 :
-                                <Posts posts={posts} refresh={refresh} setRefresh={setRefresh}/>
+                                <Posts posts={posts} refresh={refresh} setRefresh={setRefresh} getMorePosts={getMorePosts} stop={stop}/>
                             }
                         </Feed>
                         <TrendingHashtags />
@@ -115,14 +162,43 @@ export default function Timeline(){
     )
 }
 
-function Posts({posts, refresh, setRefresh}){
+function Posts({posts, refresh, setRefresh, getMorePosts, stop}){
+    const scrollTop = () =>{
+        window.scrollTo({top: 0, behavior: 'smooth'});
+     };
 return(
     <>
         {
-            posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
-            posts.map((value,index)=>
-            <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+            !stop ? 
+                <InfiniteScroll
+                pageStart={0}
+                loadMore={getMorePosts}
+                hasMore={true || false}
+                loader={<ThreeDots
+                    height="200"
+                    width="150"
+                    color='white'
+                    ariaLabel='loading'
+                    />}
+                >
+                {
+                    posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                    posts.map((value,index)=>
+                    <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                }
+                </InfiniteScroll>
+                :
+                <>
+                    {
+                        posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                        posts.map((value,index)=>
+                        <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                    }
+                    <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px"}}>Congratulations you saw it all!</p>
+                    <p onClick={scrollTop} style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px", cursor:"pointer"}}>Back to the top!</p>
+                </>
         }
+        
     </>
 )
 }
@@ -161,6 +237,51 @@ return(
     </BoxInput>
 )
 }
+
+function RefreshDiv({number,refresh,setRefresh,setHasNewPosts}){
+    return (
+        <RDiv onClick={()=>{
+            setRefresh(refresh+1);
+            }} style={{display:"flex", justifyContent:"center"}}>
+            <p>{number} new posts, load more! <IoIosRefresh/></p> 
+        </RDiv>
+    )
+}
+
+const RDiv = styled.div`
+    width: 611px;
+    height: 61px;
+
+    background: #1877F2;
+    border-radius: 16px;
+    padding: 20px 17px;
+
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 20px;
+
+    cursor: pointer;
+
+    p{
+        font-family: 'Lato';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 20px;
+        line-height: 24px;
+        text-align: center;
+
+        color: #FFFFFF;
+    }
+    svg{
+       font-size: 25px;
+       color: #FFFFFF;
+    }
+    @media (max-width: 900px){
+        width: 100%;
+        border-radius: 0;
+    }
+`;
 
 const BoxInput = styled.div`
     width: 611px;

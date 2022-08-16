@@ -18,7 +18,7 @@ export default function Header(){
     const navigate = useNavigate();
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/userInfo`;
+        const url = `http://localhost:5000/userInfo`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -43,7 +43,7 @@ export default function Header(){
             return;
         }
         
-        const url = `https://projeto-17-linkr.herokuapp.com/users/${searchInput}`;
+        const url = `http://localhost:5000/users/${searchInput}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {

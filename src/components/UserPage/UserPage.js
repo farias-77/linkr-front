@@ -1,20 +1,27 @@
-import TrendingHashtags from "../TrendingHashtags.js";
-import PostCard from "../PostCard.js";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Header from "../Header/Header.js";
 import styled from "styled-components";
 import axios from "axios";
+import { ThreeDots } from  'react-loader-spinner';
+import InfiniteScroll from 'react-infinite-scroller';
+
+import Header from "../Header/Header.js";
+import TrendingHashtags from "../TrendingHashtags.js";
+import PostCard from "../PostCard.js";
 
 export default function UserPage(){
     
+    const [ firstUserPosts, setFirstUserPosts ] = useState([]);
     const [ userPosts, setUserPosts ] = useState([]);
     const [ userInfo, setUserInfo ] = useState({username: "", profilePicture: ""});
     const [ refresh, setRefresh ] = useState(0);
+    const [ stop, setStop ] = useState(false);
+    const [ loading, setLoading ] = useState(true);
+
     const { id } = useParams();
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
+        const url = `http://localhost:5000/user/${id}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -24,7 +31,8 @@ export default function UserPage(){
         }
         const promise = axios.get(url, config);
         promise.then((res) => {
-            setUserPosts(res.data.posts);
+            setFirstUserPosts(res.data.posts);
+            setLoading(false)
             setUserInfo({ username: res.data.username, profilePicture: res.data.profilePicture });
         });
         
@@ -33,8 +41,19 @@ export default function UserPage(){
         })
     }, [id, refresh]);
 
-    function renderUserPosts(){
-        return userPosts.map((post,index) => { return <PostCard key={index} user={userInfo} post={post} refresh={refresh} setRefresh={setRefresh} /> });
+    useEffect(()=>{
+        getMorePosts(1);
+    },[firstUserPosts])
+
+    function getMorePosts(limit){
+        const realLimit = (limit)*10;
+        console.log(firstUserPosts)
+        if(firstUserPosts.length !== 0){
+            if(realLimit - firstUserPosts.length >= 10){
+                setStop(true);
+            }
+        }
+        setUserPosts(firstUserPosts.slice(0,realLimit));
     }
 
     return (
@@ -48,7 +67,18 @@ export default function UserPage(){
                     </UserInfo>
                     <PageContent>
                         <Feed>
-                            {userPosts.length > 0 ? renderUserPosts() : <h4>Este usuário ainda não tem nenhum post...</h4> }
+                            {
+                                loading ? <ThreeDots
+                                        height="200"
+                                        width="150"
+                                        color='white'
+                                        ariaLabel='loading'
+                                        />
+                                :
+                                loading === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>An error ocurred while trying to fetch the posts, please refresh the page.</p>
+                                :
+                                <Posts posts={userPosts} userInfo={userInfo} refresh={refresh} setRefresh={setRefresh} getMorePosts={getMorePosts} stop={stop}/>
+                            }
                         </Feed>
                         <TrendingHashtags />
                     </PageContent>
@@ -56,6 +86,48 @@ export default function UserPage(){
             </Container>
         </>
     )
+}
+
+function Posts({posts, userInfo, refresh, setRefresh, getMorePosts, stop}){
+    console.log(userInfo)
+    const scrollTop = () =>{
+        window.scrollTo({top: 0, behavior: 'smooth'});
+     };
+return(
+    <>
+        {
+            !stop ? 
+                <InfiniteScroll
+                pageStart={0}
+                loadMore={getMorePosts}
+                hasMore={true || false}
+                loader={<ThreeDots
+                    height="200"
+                    width="150"
+                    color='white'
+                    ariaLabel='loading'
+                    />}
+                >
+                {
+                    posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                    posts.map((value,index)=>
+                    <PostCard key={index} user={userInfo} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                }
+                </InfiniteScroll>
+                :
+                <>
+                    {
+                        posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                        posts.map((value,index)=>
+                        <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                    }
+                    <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px"}}>Congratulations you saw it all!</p>
+                    <p onClick={scrollTop} style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px", cursor:"pointer"}}>Back to the top!</p>
+                </>
+        }
+        
+    </>
+)
 }
 
 const Container = styled.div`
