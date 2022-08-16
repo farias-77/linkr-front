@@ -26,7 +26,7 @@ export default function Timeline(){
     const timer = 15000;
 
     useEffect(() => {
-        const url = `http://localhost:5000/userInfo`;
+        const url = `https://projeto-17-linkr.herokuapp.com/userInfo`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -45,7 +45,7 @@ export default function Timeline(){
     }, []);
 
     useEffect(() => {
-        const url = `http://localhost:5000/timeline/10`;
+        const url = `https://projeto-17-linkr.herokuapp.com/timeline/10`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -68,7 +68,7 @@ export default function Timeline(){
     }, [refresh]);
 
     useInterval(()=>{
-        const url = `http://localhost:5000/timeline/X`;
+        const url = `https://projeto-17-linkr.herokuapp.com/timeline/X`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -95,7 +95,7 @@ export default function Timeline(){
 
     function getMorePosts(limit){
         const realLimit = (limit)*10;
-        const url = `http://localhost:5000/timeline/${realLimit}`;
+        const url = `https://projeto-17-linkr.herokuapp.com/timeline/${realLimit}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -125,7 +125,7 @@ export default function Timeline(){
             url,
             text
         }
-        const back_url = `http://localhost:5000/register-post`;
+        const back_url = `https://projeto-17-linkr.herokuapp.com/register-post`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {

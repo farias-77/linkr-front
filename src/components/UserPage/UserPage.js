@@ -20,7 +20,7 @@ export default function UserPage(){
     const { id } = useParams();
 
     useEffect(() => {
-        const url = `http://localhost:5000/user/${id}/10`;
+        const url = `https://projeto-17-linkr.herokuapp.com/user/${id}/10`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -44,7 +44,7 @@ export default function UserPage(){
     function getMorePosts(limit){
         if(!stop){
             const realLimit = (limit)*10;
-            const url = `http://localhost:5000/user/${id}/${realLimit}`;
+            const url = `https://projeto-17-linkr.herokuapp.com/user/${id}/${realLimit}`;
             let token = window.localStorage.getItem("user_data");
             token = token.substring(1, token.length-1);
             const config = {
