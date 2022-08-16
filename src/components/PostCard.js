@@ -12,6 +12,9 @@ import axios from "axios";
 import {v4 as uuid} from "uuid";
 
 export default function PostCard({ user, post, refresh, setRefresh }){
+    console.log(user)
+    console.log(post)
+    
     const navigate = useNavigate();
     const inputRef = useRef();
 

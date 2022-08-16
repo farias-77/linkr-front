@@ -2,17 +2,22 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ThreeDots } from  'react-loader-spinner';
+import InfiniteScroll from 'react-infinite-scroller';
+
 import TrendingHashtags from "../TrendingHashtags.js";
 import Header from "../Header/Header.js";
 import PostCard from "../PostCard.js";
 
 export default function HashtagPage(){
     const { hashtag } = useParams();
-    const [ hashtagPosts, setHashtagPosts ] = useState();
+    const [ hashtagPosts, setHashtagPosts ] = useState([]);
+    const [ stop, setStop ] = useState(false);
     const [ refresh, setRefresh ] = useState(0);
+    const [ loading, setLoading ] = useState(true);
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}`;
+        const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}/10`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -23,7 +28,9 @@ export default function HashtagPage(){
         const promise = axios.get(url, config);
 
         promise.then((res) => {
-            setHashtagPosts(res.data);
+            setStop(res.data.stop);
+            setHashtagPosts(res.data.posts);
+            setLoading(false);
         });
 
         promise.catch((res) => {
@@ -31,6 +38,30 @@ export default function HashtagPage(){
         })
     }, [hashtag,refresh]);
 
+    function getMorePosts(limit){
+        if(!stop){
+            const realLimit = (limit)*10;
+            const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}/${realLimit}`;
+            let token = window.localStorage.getItem("user_data");
+            token = token.substring(1, token.length-1);
+            const config = {
+                headers:{
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+            const promise = axios.get(url, config);
+
+            promise.then((res) => {
+                setStop(res.data.stop);
+                setHashtagPosts(res.data.posts);
+            });
+
+            promise.catch((res) => {
+                console.log("erro")
+                setLoading(0);
+            })
+        }
+    }
     return (
         <>
             <Header />
@@ -42,9 +73,16 @@ export default function HashtagPage(){
                     <PageContent>
                         <Feed>
                             {
-                                !hashtagPosts || hashtagPosts.length === 0 ? <h4>Ainda não existem posts com essa hashtag, seja o primeiro!</h4> :
-                                hashtagPosts.map((value,index)=>
-                                <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                                loading ? <ThreeDots
+                                        height="200"
+                                        width="150"
+                                        color='white'
+                                        ariaLabel='loading'
+                                        />
+                                :
+                                loading === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>An error ocurred while trying to fetch the posts, please refresh the page.</p>
+                                :
+                                <Posts posts={hashtagPosts} refresh={refresh} setRefresh={setRefresh} getMorePosts={getMorePosts} stop={stop}/>
                             }
                         </Feed>
                         <TrendingHashtags refresh={refresh}/>
@@ -53,6 +91,53 @@ export default function HashtagPage(){
             </Container>
         </>
     )
+}
+
+
+function Posts({posts, refresh, setRefresh, getMorePosts, stop}){
+    console.log(posts)
+    const scrollTop = () =>{
+        window.scrollTo({top: 0, behavior: 'smooth'});
+     };
+return(
+    <>
+        {
+            !stop ? 
+                <InfiniteScroll
+                pageStart={0}
+                loadMore={getMorePosts}
+                hasMore={true || false}
+                loader={<ThreeDots
+                    height="200"
+                    width="150"
+                    color='white'
+                    ariaLabel='loading'
+                    />}
+                style={{display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}
+                >
+                {
+                    posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center",marginBottom:"50px"}}>There are no posts yet.</p> :
+                    posts.map((value,index)=>
+                    <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                }
+                </InfiniteScroll>
+                :
+                <>
+                    {
+                        posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                        <>
+                        {posts.map((value,index)=>
+                            <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)}
+                        
+                            <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px"}}>Congratulations you saw it all!</p>
+                            <p onClick={scrollTop} style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px", cursor:"pointer"}}>Back to the top!</p>
+                        </>
+                    }
+                </>
+        }
+        
+    </>
+)
 }
 
 
