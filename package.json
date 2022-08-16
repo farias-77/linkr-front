@@ -15,6 +15,7 @@
     "react-scripts": "^4.0.3",
     "react-tooltip": "^4.2.21",
     "styled-components": "^5.3.5",
+    "uuid": "^8.3.2",
     "use-interval": "^1.4.0"
   },
   "scripts": {

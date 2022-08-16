@@ -2,12 +2,19 @@ import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { IoTrash } from "react-icons/io5"; 
 import { ImPencil } from "react-icons/im";
+import { AiOutlineComment } from "react-icons/ai";
+import { BiRepost } from "react-icons/bi";
+import { FiSend } from "react-icons/fi";
 import ReactTooltip from "react-tooltip";
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import {v4 as uuid} from "uuid";
 
 export default function PostCard({ user, post, refresh, setRefresh }){
+    console.log(user)
+    console.log(post)
+    
     const navigate = useNavigate();
     const inputRef = useRef();
 
@@ -17,6 +24,9 @@ export default function PostCard({ user, post, refresh, setRefresh }){
     const [ displayDeleteModal, setDisplayDeleteModal] = useState("display: none;");
     const [ displayEditInput, setDisplayEditInput ] = useState(false);
     const [ editInput, setEditInput ] = useState(post.postText);
+    const [ comments, setComments ] = useState([]);
+    const [ showComments, setShowComments ] = useState(false);
+    const [ commentInput, setCommentInput ] = useState("");
 
     useEffect(() => {
         if(post.whoLiked.includes(userUsername)){
@@ -37,8 +47,16 @@ export default function PostCard({ user, post, refresh, setRefresh }){
         promise.then((res) => {
             setLikeCount(res.data.length);
             post.whoLiked = res.data;
-        })
-    }, []);
+        });
+
+
+        const url2 = `https://projeto-17-linkr.herokuapp.com/comment/${post.postId}`;
+        const promise2 = axios.get(url2, config);
+        promise2.then((res) => {
+            setComments([...res.data]);
+        });
+
+    }, [refresh]);
 
     useEffect(() => {
         if(displayEditInput){
@@ -177,48 +195,111 @@ export default function PostCard({ user, post, refresh, setRefresh }){
         }
     }
     
+    function toggleCommentBox(){
+        if(showComments){
+            setShowComments(false);
+        }else{
+            setShowComments(true);
+        }
+    }
+
+    function returnEmptyComments(){
+        return <><h5>No comments yet...</h5><Divisor /></>
+    }
+
+    function returnComments(){
+        return comments.map((comment, index) => {
+            return  <>
+                        <Comment key={index}>
+                            <img src={comment.profilePicture} alt="profile" />
+                            <div>
+                                <p>{comment.username}</p>
+                                <p>{comment.comment}</p>
+                            </div>
+                        </Comment>
+                        <Divisor key={uuid()}/>
+                    </>
+        })
+    }
+
+    function sendComment(){
+        const url = `https://projeto-17-linkr.herokuapp.com/comment/${post.postId}`
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.post(url, {comment: commentInput}, config);
+        promise.then(() => {
+            setRefresh(refresh+1);
+            setCommentInput("");
+        });
+        promise.catch(() => {
+            alert("Não foi possível inserir o seu comentário, por favor tente novamente.")
+        })
+    }
 
     return (
         <>
-            <Container>
-                <PictureAndLike>
-                    <img src={user.profilePicture} alt="profile" />
-                    {liked ? <IoIosHeart color="#AC0000" onClick={toggleLike}/> : <IoIosHeartEmpty color="#FFFFFF" onClick={toggleLike}/>}
-                    <p data-tip={(liked ? userLiked() : userDLiked())}>{likeCount} likes</p>
-                    <ReactTooltip />
-                </PictureAndLike>
+            <CardContainer>
+                <PostContainer border={showComments ? "16px 16px 0 0" : "16px"}>
+                    <PictureAndLike>
+                        <img src={user.profilePicture} alt="profile" />
+                        {liked ? <IoIosHeart color="#AC0000" onClick={toggleLike}/> : <IoIosHeartEmpty color="#FFFFFF" onClick={toggleLike}/>}
+                        <p data-tip={(liked ? userLiked() : userDLiked())}>{likeCount} likes</p>
+                        <ReactTooltip />
+                        <AiOutlineComment color="#FFFFFF" onClick={toggleCommentBox}/>
+                        <p>{comments.length} comments</p>
+                        <BiRepost color="#FFFFFF"/>
+                        <p>0 re-posts</p>
+                    </PictureAndLike>
 
-                <PostContent>
-                        <div>
-                            <h4 onClick={()=>{navigate(`/user/${post.userId}`)}}>{user.username}</h4>
-                            {user.username === window.localStorage.getItem("username") ?
-                                <div>
-                                    <ImPencil onClick={toggleEditInput}/>
-                                    <IoTrash onClick={toggleShowDeleteModal}/>
-                                </div>
-                                :
-                                <></>
+                    <PostContent>
+                            <div>
+                                <h4 onClick={()=>{navigate(`/user/${post.userId}`)}}>{user.username}</h4>
+                                {user.username === window.localStorage.getItem("username") ?
+                                    <div>
+                                        <ImPencil onClick={toggleEditInput}/>
+                                        <IoTrash onClick={toggleShowDeleteModal}/>
+                                    </div>
+                                    :
+                                    <></>
+                                }
+                            </div>
+
+                            { displayEditInput ?
+                            <input defaultValue={editInput} onKeyDown={getKeyDown} ref={inputRef} onChange={(e) => setEditInput(e.target.value)}/>
+                            :                    
+                            <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
                             }
-                        </div>
 
-                        { displayEditInput ?
-                        <input defaultValue={editInput} onKeyDown={getKeyDown} ref={inputRef} onChange={(e) => setEditInput(e.target.value)}/>
-                        :                    
-                        <InteractableText text={post.postText} navigateToHashtag={navigateToHashtag}/>
-                        }
+                            <a href={post.url} target="_blank">
+                                <UrlPreview>
+                                    <div>
+                                        <h3>{post.title}</h3>
+                                        <h4>{post.description}</h4>
+                                        <h5>{post.url}</h5>
+                                    </div>
+                                    <img src={post.image} alt="metadata image" />
+                                </UrlPreview>
+                            </a>
+                    </PostContent>
+                </PostContainer>
 
-                        <a href={post.url} target="_blank">
-                            <UrlPreview>
-                                <div>
-                                    <h3>{post.title}</h3>
-                                    <h4>{post.description}</h4>
-                                    <h5>{post.url}</h5>
-                                </div>
-                                <img src={post.image} alt="metadata image" />
-                            </UrlPreview>
-                        </a>
-                </PostContent>
-            </Container>
+                <CommentsContainer display={showComments ? "display: flex;" : "display: none;"}>
+                    {comments.length === 0 ? returnEmptyComments() : returnComments()}
+                    <CommentInput>
+                        <img src={user.profilePicture} alt="user profile" />
+                        <input placeholder="write a comment..." value={commentInput} onChange={e => setCommentInput(e.target.value)}/>
+                        <FiSend onClick={sendComment}/>
+                    </CommentInput>
+                </CommentsContainer>
+
+            </CardContainer>
+
+
             <WhiteBackground display={displayDeleteModal}>
                 <DeleteModal>
                     <p>Are you sure you want<br/>to delete this post?</p>
@@ -232,22 +313,31 @@ export default function PostCard({ user, post, refresh, setRefresh }){
     )
 }
 
-const Container = styled.div`
+const CardContainer = styled.div`
     width: 611px;
-    height: 276px;
-
-    background: #171717;
-    border-radius: 16px;
-    padding: 20px 17px;
 
     display: flex;
-
+    flex-direction: column;
+    
     margin-bottom: 20px;
 
     @media (max-width: 900px){
         width: 100%;
         border-radius: 0;
     }
+`;
+
+const PostContainer = styled.div`
+    width: 100%;
+    height: 276px;
+
+    background: #171717;
+    border-radius: ${props => props.border};
+    padding: 20px 17px;
+
+    display: flex;
+
+    z-index: 1;
 `;
 
 const PictureAndLike = styled.div`
@@ -277,7 +367,7 @@ const PictureAndLike = styled.div`
     p {
         margin-top: 5px;
         font-weight: 400;
-        font-size: 15px;
+        font-size: 11px;
         line-height: 13px;
         text-align: center;
         color: #FFFFFF;
@@ -369,6 +459,8 @@ const UrlPreview = styled.div`
         padding: 15px 0;
         padding-left: 20px;
         padding-right: 5px;
+
+        overflow: hidden;
 
         h3{
             font-family: 'Lato';
@@ -520,4 +612,120 @@ const Button = styled.div`
     color: ${props => props.color};
 
     cursor: pointer;
+`;
+
+const CommentsContainer = styled.div`
+    width: 100%;
+    padding-top: 10px;
+    background-color: #1E1E1E;
+    border-radius: 0 0 16px 16px;
+
+
+    ${props => props.display};
+    flex-direction: column;
+    align-items: center;
+
+    padding: 0 25px;
+
+    > h5{
+        font-family: 'Lato';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 20px;
+        color: #F3F3F3;
+        margin-top: 15px;
+    }
+`;
+
+const CommentInput = styled.div`
+    width: 100%;
+    height: 85px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: relative;
+
+    img{
+        width: 39px;
+        height: 39px;
+        border-radius: 26.5px;
+        object-fit: cover;
+    }
+
+    input{
+        width: 510px;
+        height: 39px;
+        border: none;
+        background: #252525;
+        border-radius: 8px;
+        padding-left: 20px;
+
+        color: white;
+    }
+
+    svg{
+       margin-top: 20px;
+       font-size: 22px;
+       color: #FFFFFF;
+
+       cursor: pointer;
+       position: absolute;
+       right: 3%;
+       top: 15%;
+    }
+`;
+
+const Comment = styled.div`
+    width: 100%;
+
+    margin-top: 15px;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    img{
+        width: 39px;
+        height: 39px;
+        border-radius: 26.5px;
+        object-fit: cover;
+    }
+
+    > div{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: calc(100% - 39px);
+        padding-left: 10px;
+
+        p:first-child{
+            font-family: 'Lato';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 17px;
+            color: #F3F3F3;
+
+            margin-bottom: 3px;
+        }
+
+        p:last-child{
+            font-family: 'Lato';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 17px;
+            color: #ACACAC;
+        }
+    }
+`;
+
+const Divisor = styled.div`
+    width: 100%;
+    height: 1px;
+    background-color: #353535;
+
+    margin-top: 15px;
 `;
