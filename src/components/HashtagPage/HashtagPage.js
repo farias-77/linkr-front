@@ -12,13 +12,12 @@ import PostCard from "../PostCard.js";
 export default function HashtagPage(){
     const { hashtag } = useParams();
     const [ hashtagPosts, setHashtagPosts ] = useState([]);
-    const [ firstHashtagPosts, setFirstHashtagPosts ] = useState([]);
     const [ stop, setStop ] = useState(false);
     const [ refresh, setRefresh ] = useState(0);
     const [ loading, setLoading ] = useState(true);
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}`;
+        const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}/10`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -29,7 +28,8 @@ export default function HashtagPage(){
         const promise = axios.get(url, config);
 
         promise.then((res) => {
-            setFirstHashtagPosts(res.data);
+            setStop(res.data.stop);
+            setHashtagPosts(res.data.posts);
             setLoading(false);
         });
 
@@ -38,18 +38,29 @@ export default function HashtagPage(){
         })
     }, [hashtag,refresh]);
 
-    useEffect(()=>{
-        getMorePosts(1);
-    },[firstHashtagPosts])
-
     function getMorePosts(limit){
-        const realLimit = (limit)*10;
-        if(firstHashtagPosts.length !== 0){
-            if(realLimit - firstHashtagPosts.length >= 10){
-                setStop(true);
+        if(!stop){
+            const realLimit = (limit)*10;
+            const url = `https://projeto-17-linkr.herokuapp.com/hashtag/${hashtag}/${realLimit}`;
+            let token = window.localStorage.getItem("user_data");
+            token = token.substring(1, token.length-1);
+            const config = {
+                headers:{
+                    "Authorization": `Bearer ${token}`
+                }
             }
+            const promise = axios.get(url, config);
+
+            promise.then((res) => {
+                setStop(res.data.stop);
+                setHashtagPosts(res.data.posts);
+            });
+
+            promise.catch((res) => {
+                console.log("erro")
+                setLoading(0);
+            })
         }
-        setHashtagPosts(firstHashtagPosts.slice(0,realLimit));
     }
     return (
         <>
@@ -102,9 +113,10 @@ return(
                     color='white'
                     ariaLabel='loading'
                     />}
+                style={{display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}
                 >
                 {
-                    posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                    posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center",marginBottom:"50px"}}>There are no posts yet.</p> :
                     posts.map((value,index)=>
                     <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
                 }

@@ -45,7 +45,7 @@ export default function Timeline(){
     }, []);
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/timeline`;
+        const url = `https://projeto-17-linkr.herokuapp.com/timeline/10`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -68,7 +68,7 @@ export default function Timeline(){
     }, [refresh]);
 
     useInterval(()=>{
-        const url = `http://localhost:5000/timeline`;
+        const url = `https://projeto-17-linkr.herokuapp.com/timeline/X`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -95,10 +95,26 @@ export default function Timeline(){
 
     function getMorePosts(limit){
         const realLimit = (limit)*10;
-        if(realLimit - firstPosts.length >= 10){
-            setStop(true);
+        const url = `https://projeto-17-linkr.herokuapp.com/timeline/${realLimit}`;
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
         }
-        setPosts(firstPosts.slice(0,realLimit));
+        const promise = axios.get(url, config);
+
+        promise.then((res) => {
+            console.log(res.data)
+            setStop(res.data.stop);
+            setPosts(res.data.posts);
+        });
+
+        promise.catch((res) => {
+            console.log("erro")
+            setLoading(0);
+        })
     }
 
     function createPost(event){
@@ -182,6 +198,7 @@ return(
                     color='white'
                     ariaLabel='loading'
                     />}
+                style={{display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}
                 >
                 {
                     posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
