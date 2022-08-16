@@ -11,7 +11,6 @@ import PostCard from "../PostCard.js";
 
 export default function UserPage(){
     
-    const [ firstUserPosts, setFirstUserPosts ] = useState([]);
     const [ userPosts, setUserPosts ] = useState([]);
     const [ userInfo, setUserInfo ] = useState({username: "", profilePicture: ""});
     const [ refresh, setRefresh ] = useState(0);
@@ -21,7 +20,7 @@ export default function UserPage(){
     const { id } = useParams();
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
+        const url = `http://localhost:5000/user/${id}/10`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -31,7 +30,8 @@ export default function UserPage(){
         }
         const promise = axios.get(url, config);
         promise.then((res) => {
-            setFirstUserPosts(res.data.posts);
+            setUserPosts(res.data.posts);
+            setStop(res.data.stop);
             setLoading(false)
             setUserInfo({ username: res.data.username, profilePicture: res.data.profilePicture });
         });
@@ -41,19 +41,29 @@ export default function UserPage(){
         })
     }, [id, refresh]);
 
-    useEffect(()=>{
-        getMorePosts(1);
-    },[firstUserPosts])
-
     function getMorePosts(limit){
-        const realLimit = (limit)*10;
-        console.log(firstUserPosts)
-        if(firstUserPosts.length !== 0){
-            if(realLimit - firstUserPosts.length >= 10){
-                setStop(true);
+        if(!stop){
+            const realLimit = (limit)*10;
+            const url = `http://localhost:5000/user/${id}/${realLimit}`;
+            let token = window.localStorage.getItem("user_data");
+            token = token.substring(1, token.length-1);
+            const config = {
+                headers:{
+                    "Authorization": `Bearer ${token}`
+                }
             }
+            const promise = axios.get(url, config);
+
+            promise.then((res) => {
+                setStop(res.data.stop);
+                setUserPosts(res.data.posts);
+            });
+
+            promise.catch((res) => {
+                console.log("erro")
+                setLoading(0);
+            })
         }
-        setUserPosts(firstUserPosts.slice(0,realLimit));
     }
 
     return (
@@ -107,6 +117,7 @@ return(
                     color='white'
                     ariaLabel='loading'
                     />}
+                style={{display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}
                 >
                 {
                     posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :

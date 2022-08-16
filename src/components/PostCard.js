@@ -25,7 +25,7 @@ export default function PostCard({ user, post, refresh, setRefresh }){
             setLiked(false);
         }
         
-        const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
+        const url = `http://localhost:5000/like/${post.postId}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -57,7 +57,7 @@ export default function PostCard({ user, post, refresh, setRefresh }){
     }
 
     async function likeOrDislikeInDatabase(){
-        const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
+        const url = `http://localhost:5000/like/${post.postId}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -113,7 +113,7 @@ export default function PostCard({ user, post, refresh, setRefresh }){
     }
 
     function deletePost(){
-        const url = `https://projeto-17-linkr.herokuapp.com/delete-post/${post.postId}`
+        const url = `http://localhost:5000/delete-post/${post.postId}`
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -142,7 +142,7 @@ export default function PostCard({ user, post, refresh, setRefresh }){
     }
 
     function changePostTextInDatabase(){
-        const url = `https://projeto-17-linkr.herokuapp.com/update/${post.postId}`;
+        const url = `http://localhost:5000/update/${post.postId}`;
         const body = {
             text: editInput
         }

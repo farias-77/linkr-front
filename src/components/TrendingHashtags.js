@@ -8,7 +8,7 @@ export default function TrendignHashtags({refresh}){
     const [trendignHashtags, setTrendingHashtags] = useState([]);
     
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/trending`;
+        const url = `http://localhost:5000/trending`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
