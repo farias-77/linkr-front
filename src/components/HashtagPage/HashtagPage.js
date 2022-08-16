@@ -125,11 +125,14 @@ return(
                 <>
                     {
                         posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
-                        posts.map((value,index)=>
-                        <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
+                        <>
+                        {posts.map((value,index)=>
+                            <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)}
+                        
+                            <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px"}}>Congratulations you saw it all!</p>
+                            <p onClick={scrollTop} style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px", cursor:"pointer"}}>Back to the top!</p>
+                        </>
                     }
-                    <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px"}}>Congratulations you saw it all!</p>
-                    <p onClick={scrollTop} style={{fontSize:"24px", color:"#ffffff", textAlign:"center", marginBottom:"50px", cursor:"pointer"}}>Back to the top!</p>
                 </>
         }
         
