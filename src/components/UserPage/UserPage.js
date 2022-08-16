@@ -21,7 +21,7 @@ export default function UserPage(){
     const { id } = useParams();
 
     useEffect(() => {
-        const url = `http://localhost:5000/user/${id}`;
+        const url = `https://projeto-17-linkr.herokuapp.com/user/${id}`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
