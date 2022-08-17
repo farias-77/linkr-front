@@ -13,6 +13,8 @@ import PostCard from "../PostCard.js";
 
 export default function Timeline(){
     const [ firstPosts, setFirstPosts ] = useState([]);
+    const [ firstPostsLength, setFirstPostsLength ] = useState(0);
+    const [ reloadParameter, setReloadParameter ] = useState(0);
     const [ newPosts, setNewPosts ] = useState([]);
     const [ hasNewPosts, setHasNewPosts ] = useState(false);
     const [ posts, setPosts ] = useState([]);
@@ -45,7 +47,7 @@ export default function Timeline(){
     }, []);
 
     useEffect(() => {
-        const url = `https://projeto-17-linkr.herokuapp.com/timeline/10`;
+        const url = `https://projeto-17-linkr.herokuapp.com/timeline/X`;
         let token = window.localStorage.getItem("user_data");
         token = token.substring(1, token.length-1);
         const config = {
@@ -56,7 +58,10 @@ export default function Timeline(){
         const promise = axios.get(url, config);
 
         promise.then((res) => {
-            setFirstPosts(res.data);
+            console.log(res.data)
+            setFirstPosts(res.data.posts);
+            setFirstPostsLength(res.data.posts.length);
+            console.log(res.data.posts.length);
             setHasNewPosts(false);
             setLoading(false);
         });
@@ -79,12 +84,13 @@ export default function Timeline(){
         const promise = axios.get(url, config);
 
         promise.then((res) => {
-            setNewPosts(res.data);
+            setNewPosts(res.data.posts);
         });
     },timer)
 
     useEffect(()=>{
-        if(newPosts.length - firstPosts.length > 0){
+        setReloadParameter(newPosts.length - firstPostsLength);
+        if(reloadParameter > 0){
             setHasNewPosts(true);
         }
     },[newPosts])
@@ -108,7 +114,7 @@ export default function Timeline(){
         promise.then((res) => {
             console.log(res.data)
             setStop(res.data.stop);
-            setPosts(res.data.posts);
+            setPosts(res.data.posts.slice(reloadParameter));
         });
 
         promise.catch((res) => {
@@ -137,6 +143,7 @@ export default function Timeline(){
         promise.then(()=>{
             setRefresh(refresh+1);
             setPending(false); 
+            setFirstPostsLength(firstPostsLength+1);
             setUrl(""); 
             setText("")});
         promise.catch(()=>{
@@ -157,7 +164,7 @@ export default function Timeline(){
                         <Feed>
                             <InputBox img={userInfo.profilePicture} url={url} setUrl={setUrl} text={text} setText={setText} createPost={createPost} pending={pending}/>
                             {
-                                hasNewPosts ? <RefreshDiv number={newPosts.length - firstPosts.length} refresh={refresh} setRefresh={setRefresh} setHasNewPosts={setHasNewPosts}/> : <></>
+                                hasNewPosts ? <RefreshDiv number={newPosts.length - firstPosts.length} refresh={refresh} setRefresh={setRefresh} setReloadParameter={setReloadParameter}/> : <></>
                             }
                             {
                                 loading ? <ThreeDots
@@ -260,10 +267,11 @@ return(
 )
 }
 
-function RefreshDiv({number,refresh,setRefresh,setHasNewPosts}){
+function RefreshDiv({number,refresh,setRefresh,setReloadParameter}){
     return (
         <RDiv onClick={()=>{
             setRefresh(refresh+1);
+            setReloadParameter(0);
             }} style={{display:"flex", justifyContent:"center"}}>
             <p>{number} new posts, load more! <IoIosRefresh/></p> 
         </RDiv>
