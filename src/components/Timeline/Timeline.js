@@ -58,10 +58,8 @@ export default function Timeline(){
         const promise = axios.get(url, config);
 
         promise.then((res) => {
-            console.log(res.data)
             setFirstPosts(res.data.posts);
             setFirstPostsLength(res.data.posts.length);
-            console.log(res.data.posts.length);
             setHasNewPosts(false);
             setLoading(false);
         });
@@ -112,7 +110,6 @@ export default function Timeline(){
         const promise = axios.get(url, config);
 
         promise.then((res) => {
-            console.log(res.data)
             setStop(res.data.stop);
             setPosts(res.data.posts.slice(reloadParameter));
         });
@@ -141,15 +138,17 @@ export default function Timeline(){
         }
         const promise = axios.post(back_url, body, config);
         promise.then(()=>{
-            setRefresh(refresh+1);
             setPending(false); 
             setFirstPostsLength(firstPostsLength+1);
             setUrl(""); 
             setText("")});
+            setRefresh(refresh+1);
         promise.catch(()=>{
             setPending(false); 
             alert("Houve um erro ao publicar seu link.");  
-            })
+            });
+
+        
     }
 
     return (
@@ -231,7 +230,6 @@ return(
     </>
 )
 }
-
 
 function InputBox({img,url,setUrl,text,setText,createPost,pending}){
 return(

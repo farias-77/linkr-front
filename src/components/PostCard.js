@@ -11,22 +11,44 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {v4 as uuid} from "uuid";
 
-export default function PostCard({ user, post, refresh, setRefresh }){
-    // console.log(user)
-    // console.log(post)
-    
+export default function PostCard({ user, post, refresh, setRefresh }){   
     const navigate = useNavigate();
     const inputRef = useRef();
 
     const userUsername = window.localStorage.getItem("username");
-    const [ liked, setLiked ] = useState();
-    const [ likeCount, setLikeCount ] = useState();
+    const [ liked, setLiked ] = useState(false);
+    const [ likeCount, setLikeCount ] = useState(0);
     const [ displayDeleteModal, setDisplayDeleteModal] = useState("display: none;");
     const [ displayEditInput, setDisplayEditInput ] = useState(false);
     const [ editInput, setEditInput ] = useState(post.postText);
     const [ comments, setComments ] = useState([]);
     const [ showComments, setShowComments ] = useState(false);
     const [ commentInput, setCommentInput ] = useState("");
+    const [ userProfilePicture, setUserProfilePicture ] = useState("");
+
+    useEffect(() => {
+        if(!showComments){
+            return;
+        }
+        
+        const url = `https://projeto-17-linkr.herokuapp.com/userInfo`;
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length-1);
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+        const promise = axios.get(url, config);
+        promise.then((res) => {
+            console.log(res.data);
+            setUserProfilePicture(res.data[0].profilePicture);
+        });
+        
+        promise.catch((res) => {
+            console.log(res.data);
+        })
+    }, [showComments]);
 
     useEffect(() => {
         if(post.whoLiked.includes(userUsername)){
@@ -240,7 +262,7 @@ export default function PostCard({ user, post, refresh, setRefresh }){
             alert("Não foi possível inserir o seu comentário, por favor tente novamente.")
         })
     }
-
+    
     return (
         <>
             <CardContainer>
@@ -291,7 +313,7 @@ export default function PostCard({ user, post, refresh, setRefresh }){
                 <CommentsContainer display={showComments ? "display: flex;" : "display: none;"}>
                     {comments.length === 0 ? returnEmptyComments() : returnComments()}
                     <CommentInput>
-                        <img src={user.profilePicture} alt="user profile" />
+                        <img src={ userProfilePicture ? userProfilePicture : "" } alt="user profile" />
                         <input placeholder="write a comment..." value={commentInput} onChange={e => setCommentInput(e.target.value)}/>
                         <FiSend onClick={sendComment}/>
                     </CommentInput>
