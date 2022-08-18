@@ -9,247 +9,222 @@ import ReactTooltip from "react-tooltip";
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import {v4 as uuid} from "uuid";
+import { v4 as uuid } from "uuid";
 
-export default function PostCard({ user, post, refresh, setRefresh }){
-    // console.log(user)
-    // console.log(post)
-    
-    const navigate = useNavigate();
-    const inputRef = useRef();
+export default function PostCard({ user, post, refresh, setRefresh }) {
+  console.log(user);
+  console.log(post);
 
-    const userUsername = window.localStorage.getItem("username");
-    const [ liked, setLiked ] = useState();
-    const [ likeCount, setLikeCount ] = useState();
-    const [ displayDeleteModal, setDisplayDeleteModal] = useState("display: none;");
-    const [ displayEditInput, setDisplayEditInput ] = useState(false);
-    const [ editInput, setEditInput ] = useState(post.postText);
-    const [ comments, setComments ] = useState([]);
-    const [ showComments, setShowComments ] = useState(false);
-    const [ commentInput, setCommentInput ] = useState("");
-    const [displayConfirmRepost, setDisplayConfirmRepost] = useState("display: none;");
-    const [reposts, setReposts] = useState([]);
+  const navigate = useNavigate();
+  const inputRef = useRef();
 
-    useEffect(() => {
-        if(post.whoLiked.includes(userUsername)){
-            setLiked(true);
-        }else{
-            setLiked(false);
-        }
-        
-        const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
-        let token = window.localStorage.getItem("user_data");
-        token = token.substring(1, token.length-1);
-        const config = {
-            headers:{
-                "Authorization": `Bearer ${token}`
-            }
-        }
-        const promise = axios.get(url, config);
-        promise.then((res) => {
-            setLikeCount(res.data.length);
-            post.whoLiked = res.data;
-        });
+  const userUsername = window.localStorage.getItem("username");
+  const [liked, setLiked] = useState();
+  const [likeCount, setLikeCount] = useState();
+  const [displayDeleteModal, setDisplayDeleteModal] =
+    useState("display: none;");
+  const [displayEditInput, setDisplayEditInput] = useState(false);
+  const [editInput, setEditInput] = useState(post.postText);
+  const [comments, setComments] = useState([]);
+  const [showComments, setShowComments] = useState(false);
+  const [commentInput, setCommentInput] = useState("");
+  const [displayConfirmRepost, setDisplayConfirmRepost] =
+    useState("display: none;");
+  const [reposts, setReposts] = useState([]);
 
-
-        const url2 = `https://projeto-17-linkr.herokuapp.com/comment/${post.postId}`;
-        const promise2 = axios.get(url2, config);
-        promise2.then((res) => {
-            setComments([...res.data]);
-        });
-
-    }, [refresh]);
-    
-        const url3 = `https://projeto-17-linkr.herokuapp.com/repost/${post.postId}`;
-        const promise3 = axios.get(url3, config);
-        promise3.then((res) => {
-          setReposts([...res.data]);
-        });
-    }, [refresh]);
-
-    useEffect(() => {
-        if(displayEditInput){
-            inputRef.current.focus();
-        }
-    }, [displayEditInput]);
-
-    function toggleLike(){
-        if(liked){
-            setLiked(false);
-        }else{
-            setLiked(true);
-        }
-
-        likeOrDislikeInDatabase();
+  useEffect(() => {
+    if (post.whoLiked.includes(userUsername)) {
+      setLiked(true);
+    } else {
+      setLiked(false);
     }
 
-    async function likeOrDislikeInDatabase(){
-        const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
-        let token = window.localStorage.getItem("user_data");
-        token = token.substring(1, token.length-1);
-        const config = {
-            headers:{
-                "Authorization": `Bearer ${token}`
-            }
-        }
-        const body = {};
-        const promise = axios.post(url, body, config); 
-        promise.then((res) => {
-            post.whoLiked = res.data;
-            setLikeCount(res.data.length);
-        })
+    const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
+    let token = window.localStorage.getItem("user_data");
+    token = token.substring(1, token.length - 1);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const promise = axios.get(url, config);
+    promise.then((res) => {
+      setLikeCount(res.data.length);
+      post.whoLiked = res.data;
+    });
+
+    const url2 = `https://projeto-17-linkr.herokuapp.com/comment/${post.postId}`;
+    const promise2 = axios.get(url2, config);
+    promise2.then((res) => {
+      setComments([...res.data]);
+    });
+
+    const url3 = `https://projeto-17-linkr.herokuapp.com/repost/${post.postId}`;
+    const promise3 = axios.get(url3, config);
+    promise3.then((res) => {
+      setReposts([...res.data]);
+    });
+  }, [refresh]);
+
+  useEffect(() => {
+    if (displayEditInput) {
+      inputRef.current.focus();
+    }
+  }, [displayEditInput]);
+
+  function toggleLike() {
+    if (liked) {
+      setLiked(false);
+    } else {
+      setLiked(true);
     }
 
-    function userLiked(){
-        const localWhoLiked = post.whoLiked.filter(username => username !== userUsername);
+    likeOrDislikeInDatabase();
+  }
 
-         if(localWhoLiked.length === 0){
-            return `Você`;
-        }else if(localWhoLiked.length === 1){
-            return `Você e ${localWhoLiked[0]}`;
-        }else if(localWhoLiked.length >= 2){
-            return `Você, ${localWhoLiked[0]} e outras ${localWhoLiked.length-1} pessoas`;
-        }
+  async function likeOrDislikeInDatabase() {
+    const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
+    let token = window.localStorage.getItem("user_data");
+    token = token.substring(1, token.length - 1);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const body = {};
+    const promise = axios.post(url, body, config);
+    promise.then((res) => {
+      post.whoLiked = res.data;
+      setLikeCount(res.data.length);
+    });
+  }
+
+  function userLiked() {
+    const localWhoLiked = post.whoLiked.filter(
+      (username) => username !== userUsername
+    );
+
+    if (localWhoLiked.length === 0) {
+      return `Você`;
+    } else if (localWhoLiked.length === 1) {
+      return `Você e ${localWhoLiked[0]}`;
+    } else if (localWhoLiked.length >= 2) {
+      return `Você, ${localWhoLiked[0]} e outras ${
+        localWhoLiked.length - 1
+      } pessoas`;
+    }
+  }
+
+  function userDLiked() {
+    if (post.whoLiked.length === 1) {
+      return `${post.whoLiked[0]}`;
+    } else if (post.whoLiked.length === 2) {
+      return `${post.whoLiked[0]} e ${post.whoLiked[1]}`;
+    } else if (post.whoLiked.length >= 3) {
+      return `${post.whoLiked[0]}, ${post.whoLiked[1]} e outras ${
+        post.whoLiked.length - 2
+      } pessoas`;
+    }
+  }
+
+  function navigateToHashtag(word) {
+    const index = word.indexOf("#");
+    if (index === 0) {
+      const hashtag = word.slice(1);
+      navigate(`/hashtag/${hashtag}`);
+    }
+  }
+
+  function toggleShowDeleteModal() {
+    if (displayDeleteModal === "display: flex;") {
+      setDisplayDeleteModal("display: none;");
+    } else {
+      setDisplayDeleteModal("display: flex;");
+    }
+  }
+
+  function toggleShowConfirmRepost() {
+    if (displayConfirmRepost === "display: flex;") {
+      setDisplayConfirmRepost("display: none;");
+    } else {
+      setDisplayConfirmRepost("display: flex;");
+    }
+  }
+
+  function deletePost() {
+    const url = `https://projeto-17-linkr.herokuapp.com/delete-post/${post.postId}`;
+    let token = window.localStorage.getItem("user_data");
+    token = token.substring(1, token.length - 1);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const promise = axios.delete(url, config);
+    promise.then(() => {
+      toggleShowDeleteModal();
+      setRefresh(refresh + 1);
+    });
+
+    promise.catch(() => {
+      toggleShowDeleteModal();
+      alert("Não foi possível deletar o post :(");
+    });
+  }
+
+  function toggleEditInput() {
+    if (displayEditInput) {
+      setDisplayEditInput(false);
+    } else {
+      setDisplayEditInput(true);
+    }
+  }
+
+  function changePostTextInDatabase() {
+    const url = `https://projeto-17-linkr.herokuapp.com/update/${post.postId}`;
+    const body = {
+      text: editInput,
+    };
+    let token = window.localStorage.getItem("user_data");
+    token = token.substring(1, token.length - 1);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const promise = axios.put(url, body, config);
+    promise.then(() => {
+      toggleEditInput();
+      setRefresh(refresh + 1);
+    });
+    promise.catch(() => {
+      alert("Não foi possível editar o post, por favor tente novamente.");
+    });
+  }
+
+  function getKeyDown(e) {
+    const keyDown = e.key;
+
+    if (keyDown === "Escape") {
+      toggleEditInput();
+      return;
     }
 
-    function userDLiked(){
-
-        if(post.whoLiked.length === 1){
-            return `${post.whoLiked[0]}`;
-        }else if(post.whoLiked.length === 2){
-            return `${post.whoLiked[0]} e ${post.whoLiked[1]}`;
-        }else if(post.whoLiked.length >= 3){
-            return `${post.whoLiked[0]}, ${post.whoLiked[1]} e outras ${post.whoLiked.length-2} pessoas`;
-        }      
+    if (keyDown === "Enter") {
+      changePostTextInDatabase();
+      return;
     }
+  }
 
-    function navigateToHashtag(word){
-        const index = word.indexOf("#")
-        if(index === 0){
-            const hashtag = word.slice(1);
-            navigate(`/hashtag/${hashtag}`);
-        }
+  function toggleCommentBox() {
+    if (showComments) {
+      setShowComments(false);
+    } else {
+      setShowComments(true);
     }
+  }
 
-    function toggleShowDeleteModal(){
-        if(displayDeleteModal === "display: flex;"){
-            setDisplayDeleteModal("display: none;");
-        }else{
-            setDisplayDeleteModal("display: flex;");
-        }
-    }
-
-    function deletePost(){
-        const url = `https://projeto-17-linkr.herokuapp.com/delete-post/${post.postId}`
-        let token = window.localStorage.getItem("user_data");
-        token = token.substring(1, token.length-1);
-        const config = {
-            headers:{
-                "Authorization": `Bearer ${token}`
-            }
-        }
-        const promise = axios.delete(url, config);      
-        promise.then(() => {
-            toggleShowDeleteModal();
-            setRefresh(refresh+1);
-        });
-
-        promise.catch(() => {
-            toggleShowDeleteModal();
-            alert("Não foi possível deletar o post :(");
-        })
-    }
-
-    function toggleEditInput(){
-        if(displayEditInput){
-            setDisplayEditInput(false);
-        }else{
-            setDisplayEditInput(true);
-        }
-    }
-
-    function changePostTextInDatabase(){
-        const url = `https://projeto-17-linkr.herokuapp.com/update/${post.postId}`;
-        const body = {
-            text: editInput
-        }
-        let token = window.localStorage.getItem("user_data");
-        token = token.substring(1, token.length-1);
-        const config = {
-            headers:{
-                "Authorization": `Bearer ${token}`
-            }
-        }
-        const promise = axios.put(url, body, config);
-        promise.then(() => {
-            toggleEditInput();
-            setRefresh(refresh+1);
-        });
-        promise.catch(() => {
-            alert("Não foi possível editar o post, por favor tente novamente.");
-        });
-    }
-
-    function getKeyDown(e){
-        const keyDown = e.key;
-
-        if(keyDown === "Escape"){
-            toggleEditInput();
-            return;
-        }
-
-        if(keyDown === "Enter"){
-            changePostTextInDatabase();
-            return;
-        }
-    }
-    
-    function toggleCommentBox(){
-        if(showComments){
-            setShowComments(false);
-        }else{
-            setShowComments(true);
-        }
-    }
-
-    function returnEmptyComments(){
-        return <><h5>No comments yet...</h5><Divisor /></>
-    }
-
-    function returnComments(){
-        return comments.map((comment, index) => {
-            return  <>
-                        <Comment key={index}>
-                            <img src={comment.profilePicture} alt="profile" />
-                            <div>
-                                <p>{comment.username}</p>
-                                <p>{comment.comment}</p>
-                            </div>
-                        </Comment>
-                        <Divisor key={uuid()}/>
-                    </>
-        })
-    }
-
-    function sendComment(){
-        const url = `https://projeto-17-linkr.herokuapp.com/comment/${post.postId}`
-        let token = window.localStorage.getItem("user_data");
-        token = token.substring(1, token.length-1);
-        const config = {
-            headers:{
-                "Authorization": `Bearer ${token}`
-            }
-        }
-        const promise = axios.post(url, {comment: commentInput}, config);
-        promise.then(() => {
-            setRefresh(refresh+1);
-            setCommentInput("");
-        });
-        promise.catch(() => {
-            alert("Não foi possível inserir o seu comentário, por favor tente novamente.")
-        })
-    }
-    
+  function returnEmptyComments() {
     return (
       <>
         <h5>No comments yet...</h5>
