@@ -79,7 +79,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     promise3.then((res) => {
       setReposts(res.data.length);
     });
-    
+
   }, [refresh, whoReposted]);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
   }
 
   async function likeOrDislikeInDatabase() {
-    const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
+    const url = `https://projeto-17-linkr.herokuapp.com/like/${(whoReposted ? post.repostId : post.postId)}`;
     let token = window.localStorage.getItem("user_data");
     token = token.substring(1, token.length - 1);
     const config = {
@@ -112,6 +112,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     promise.then((res) => {
       post.whoLiked = res.data;
       setLikeCount(res.data.length);
+      setRefresh(refresh+1);
     });
   }
 
