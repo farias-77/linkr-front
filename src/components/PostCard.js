@@ -12,34 +12,28 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 
 export default function PostCard({ user, post, refresh, setRefresh }) {
-  console.log(user);
-  console.log(post.id);
-
   const navigate = useNavigate();
   const inputRef = useRef();
 
   const userUsername = window.localStorage.getItem("username");
   const [liked, setLiked] = useState();
   const [likeCount, setLikeCount] = useState();
-  const [displayDeleteModal, setDisplayDeleteModal] =
-    useState("display: none;");
+  const [displayDeleteModal, setDisplayDeleteModal] = useState("display: none;");
   const [displayEditInput, setDisplayEditInput] = useState(false);
   const [editInput, setEditInput] = useState(post.postText);
   const [comments, setComments] = useState([]);
   const [showComments, setShowComments] = useState(false);
   const [commentInput, setCommentInput] = useState("");
-  const [displayConfirmRepost, setDisplayConfirmRepost] =
-    useState("display: none;");
+  const [displayConfirmRepost, setDisplayConfirmRepost] = useState("display: none;");
   const [reposts, setReposts] = useState();
+  const [whoReposted, setWhoReposted] = useState("");
 
   useEffect(() => {
-    if (post.whoLiked.includes(userUsername)) {
-      setLiked(true);
-    } else {
-      setLiked(false);
+    if(!post.repostId){
+      return;
     }
 
-    const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
+    const url = `https://projeto-17-linkr.herokuapp.com/user/${post.repostUserId}`;
     let token = window.localStorage.getItem("user_data");
     token = token.substring(1, token.length - 1);
     const config = {
@@ -49,23 +43,44 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     };
     const promise = axios.get(url, config);
     promise.then((res) => {
-      console.log(res.data)
+      setWhoReposted(res.data[0].username);
+    });    
+  }, []);
+
+  useEffect(() => {
+    const url = `https://projeto-17-linkr.herokuapp.com/like/${(whoReposted ? post.repostId : post.postId)}`;
+    let token = window.localStorage.getItem("user_data");
+    token = token.substring(1, token.length - 1);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const promise = axios.get(url, config);
+    promise.then((res) => {
       setLikeCount(res.data.length);
       post.whoLiked = res.data;
+
+      if (post.whoLiked.includes(userUsername)) {
+        setLiked(true);
+      } else {
+        setLiked(false);
+      }
     });
 
-    const url2 = `https://projeto-17-linkr.herokuapp.com/comment/${post.postId}`;
+    const url2 = `https://projeto-17-linkr.herokuapp.com/comment/${(whoReposted ? post.repostId : post.postId)}`;
     const promise2 = axios.get(url2, config);
     promise2.then((res) => {
       setComments([...res.data]);
     });
 
-    const url3 = `https://projeto-17-linkr.herokuapp.com/repost/${post.postId}`;
+    const url3 = `https://projeto-17-linkr.herokuapp.com/repost/${(whoReposted ? post.repostId : post.postId)}`;
     const promise3 = axios.get(url3, config);
     promise3.then((res) => {
       setReposts(res.data.length);
     });
-  }, [refresh]);
+
+  }, [refresh, whoReposted]);
 
   useEffect(() => {
     if (displayEditInput) {
@@ -84,7 +99,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
   }
 
   async function likeOrDislikeInDatabase() {
-    const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
+    const url = `https://projeto-17-linkr.herokuapp.com/like/${(whoReposted ? post.repostId : post.postId)}`;
     let token = window.localStorage.getItem("user_data");
     token = token.substring(1, token.length - 1);
     const config = {
@@ -97,6 +112,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     promise.then((res) => {
       post.whoLiked = res.data;
       setLikeCount(res.data.length);
+      setRefresh(refresh+1);
     });
   }
 
@@ -301,7 +317,12 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
   return (
     <>
       <CardContainer>
-        <PostContainer border={showComments ? "16px 16px 0 0" : "16px"}>
+        <RepostContainer display={ whoReposted ? "display: flex;" : "display: none;"}>
+          <BiRepost color="#FFFFFF" />
+          <p>Re-posted by <strong>{whoReposted ? whoReposted : ""}</strong></p>
+        </RepostContainer>
+        
+        <PostContainer border={showComments ? (whoReposted ? "0" : "16px 16px 0 0") : (whoReposted ? "0 0 16px 16px" : "16px")}>
           <PictureAndLike>
             <img src={user.profilePicture} alt="profile" />
             {liked ? (
@@ -842,4 +863,25 @@ const Divisor = styled.div`
   background-color: #353535;
 
   margin-top: 15px;
+`;
+
+const RepostContainer = styled.div`
+  width: 100%;
+  height: 33px;
+
+  ${props => props.display};
+  align-items: center;
+  padding-left: 20px;
+
+  background-color: #1e1e1e;
+  border-radius: 16px 16px 0 0;
+
+  svg{
+    font-size: 20px;
+    margin-right: 5px;
+  }
+
+  p{
+    color: white;
+  }
 `;

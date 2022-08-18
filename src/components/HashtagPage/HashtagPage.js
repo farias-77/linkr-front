@@ -4,7 +4,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { ThreeDots } from  'react-loader-spinner';
 import InfiniteScroll from 'react-infinite-scroller';
-
 import TrendingHashtags from "../TrendingHashtags.js";
 import Header from "../Header/Header.js";
 import PostCard from "../PostCard.js";
