@@ -12,7 +12,7 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 
 export default function PostCard({ user, post, refresh, setRefresh }) {
-  // console.log(user);
+  console.log(user);
   console.log(post.id);
 
   const navigate = useNavigate();
@@ -34,13 +34,11 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
 
   useEffect(() => {
     if (post.whoLiked.includes(userUsername)) {
-      console.log("liked",post.id)
       setLiked(true);
     } else {
-      console.log("not liked",post.postId)
       setLiked(false);
     }
-    // console.log(post)
+
     const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
     let token = window.localStorage.getItem("user_data");
     token = token.substring(1, token.length - 1);
