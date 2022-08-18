@@ -12,8 +12,6 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 
 export default function PostCard({ user, post, refresh, setRefresh }) {
-  console.log(user);
-  console.log(post);
 
   const navigate = useNavigate();
   const inputRef = useRef();
@@ -30,7 +28,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
   const [commentInput, setCommentInput] = useState("");
   const [displayConfirmRepost, setDisplayConfirmRepost] =
     useState("display: none;");
-  const [reposts, setReposts] = useState([]);
+  const [reposts, setReposts] = useState();
 
   useEffect(() => {
     if (post.whoLiked.includes(userUsername)) {
@@ -62,7 +60,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     const url3 = `https://projeto-17-linkr.herokuapp.com/repost/${post.postId}`;
     const promise3 = axios.get(url3, config);
     promise3.then((res) => {
-      setReposts([...res.data]);
+      setReposts(res.data.length);
     });
   }, [refresh]);
 
@@ -315,7 +313,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
             <AiOutlineComment color="#FFFFFF" onClick={toggleCommentBox} />
             <p>{comments.length} comments</p>
             <BiRepost color="#FFFFFF" onClick={toggleShowConfirmRepost} />
-            <p>{reposts.length} re-posts</p>
+            <p>{reposts} re-posts</p>
           </PictureAndLike>
 
           <PostContent>
