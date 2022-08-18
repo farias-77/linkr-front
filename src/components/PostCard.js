@@ -48,13 +48,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
   }, []);
 
   useEffect(() => {
-    if (post.whoLiked.includes(userUsername)) {
-      setLiked(true);
-    } else {
-      setLiked(false);
-    }
-
-    const url = `https://projeto-17-linkr.herokuapp.com/like/${post.postId}`;
+    const url = `https://projeto-17-linkr.herokuapp.com/like/${(whoReposted ? post.repostId : post.postId)}`;
     let token = window.localStorage.getItem("user_data");
     token = token.substring(1, token.length - 1);
     const config = {
@@ -66,20 +60,27 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     promise.then((res) => {
       setLikeCount(res.data.length);
       post.whoLiked = res.data;
+
+      if (post.whoLiked.includes(userUsername)) {
+        setLiked(true);
+      } else {
+        setLiked(false);
+      }
     });
 
-    const url2 = `https://projeto-17-linkr.herokuapp.com/comment/${post.postId}`;
+    const url2 = `https://projeto-17-linkr.herokuapp.com/comment/${(whoReposted ? post.repostId : post.postId)}`;
     const promise2 = axios.get(url2, config);
     promise2.then((res) => {
       setComments([...res.data]);
     });
 
-    const url3 = `https://projeto-17-linkr.herokuapp.com/repost/${post.postId}`;
+    const url3 = `https://projeto-17-linkr.herokuapp.com/repost/${(whoReposted ? post.repostId : post.postId)}`;
     const promise3 = axios.get(url3, config);
     promise3.then((res) => {
       setReposts(res.data.length);
     });
-  }, [refresh]);
+    
+  }, [refresh, whoReposted]);
 
   useEffect(() => {
     if (displayEditInput) {
