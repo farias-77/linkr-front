@@ -58,10 +58,6 @@ export default function Timeline(){
         const promise = axios.get(url, config);
 
         promise.then((res) => {
-<<<<<<< HEAD
-=======
-            console.log(res.data.posts)
->>>>>>> bd1e959db0beef32249f61b4e753a6992dc038dd
             setFirstPosts(res.data.posts);
             setFirstPostsLength(res.data.posts.length);
             setHasNewPosts(false);
@@ -158,10 +154,8 @@ export default function Timeline(){
             setPending(false); 
             alert("Houve um erro ao publicar seu link.");  
             });
-
-        
     }
-    console.log(posts);
+
     return (
         <>
             <Header />

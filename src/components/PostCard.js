@@ -12,9 +12,6 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 
 export default function PostCard({ user, post, refresh, setRefresh }) {
-  console.log(user);
-  console.log(post.id);
-
   const navigate = useNavigate();
   const inputRef = useRef();
 
@@ -49,7 +46,6 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     };
     const promise = axios.get(url, config);
     promise.then((res) => {
-      console.log(res.data)
       setLikeCount(res.data.length);
       post.whoLiked = res.data;
     });
