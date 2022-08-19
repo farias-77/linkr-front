@@ -198,7 +198,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
   }
 
   function changePostTextInDatabase() {
-    const url = `https://projeto-17-linkr.herokuapp.com/update/${post.postId}`;
+    const url = `https://projeto-17-linkr.herokuapp.com/update/${(whoReposted ? post.repostId : post.postId)}`;
     const body = {
       text: editInput,
     };
