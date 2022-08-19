@@ -2,6 +2,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ThreeDots } from  'react-loader-spinner';
 
 export default function SignUp () {
     const [data, setData] = useState({email: "", password: "", username: "", profilePicture: ""});
@@ -46,7 +47,14 @@ export default function SignUp () {
                 <input placeholder='username' type='text' required value={data.username} onChange={e => setData({ ...data, username: e.target.value })} />
                 <input placeholder='picture url' type='url' required value={data.profilePicture} onChange={e => setData({ ...data, profilePicture: e.target.value })} />
                 {
-                    disable ? <ButtonDisabled>Sign Up</ButtonDisabled>
+                    disable ? <ButtonDisabled>
+                                <ThreeDots
+                                    height="60"
+                                    width="150"
+                                    color='white'
+                                    ariaLabel='loading'
+                                />
+                    </ButtonDisabled>
                     : <button type='submit'>Sign Up</button>
                 }
                 <Link to='/'>
