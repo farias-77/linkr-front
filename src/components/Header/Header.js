@@ -13,8 +13,10 @@ export default function Header(){
     const [ searchInput, setSearchInput ] = useState("");
     const [ usersList, setUsersList ] = useState([]);
     const [ showOptions, setShowOptions ] = useState(false);
-    const [, setUserData] = useUserData();
-    const [ userInfo, setUserInfo] = useState({username: "", profilePicture: ""});
+    const [, setUserData ] = useUserData();
+    const [ userInfo, setUserInfo ] = useState({username: "", profilePicture: ""});
+    const [ userFollows, setUserFollows ] = useState([]);
+    const [ orderedUserList, setOrderedUserList ] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,7 +36,9 @@ export default function Header(){
         
         promise.catch((res) => {
             console.log(res.data);
-        })
+        });
+
+        getUserFollows();
     }, []);
 
     useEffect(() => {       
@@ -56,6 +60,7 @@ export default function Header(){
         promise.then((res) => {
             { res.data.length > 0 ? setShowOptions(true) : setShowOptions(false) }
             setUsersList(res.data);
+            setOrderedUserList(true);
         });
 
         promise.catch(() => {
@@ -63,6 +68,28 @@ export default function Header(){
         })
 
     }, [searchInput]);
+
+    useEffect(() => {
+        if(orderedUserList){
+            orderUserList();
+        }
+    }, [usersList]);
+
+    function orderUserList(){     
+        if(usersList.length > 0){
+            let followedUsers = usersList.filter(user => userFollows.find(followedUser => followedUser.followedId === user.id));
+            usersList.map(user => {
+                if(followedUsers.find(value => value.id === user.id)){
+                    return;
+                }else{
+                    followedUsers.push(user);
+                }
+            });
+
+            setUsersList(followedUsers);
+            setOrderedUserList(false);
+        }
+    }
 
     function toggleDisplayLogoutControl(){
         if(displayLogoutControl === "display: none;"){
@@ -78,7 +105,7 @@ export default function Header(){
     }
 
     function renderSearchOptions(){    
-        return usersList.map((user, index) => {return <UserOption key={index} setShowOptions={setShowOptions} user={user} isLastOption={index === usersList.length - 1 ? true : false }/>})
+        return usersList.map((user, index) => {return <UserOption key={index} userFollows={userFollows} setShowOptions={setShowOptions} user={user} isLastOption={index === usersList.length - 1 ? true : false }/>})
     }   
 
     function signOut (){
@@ -86,6 +113,21 @@ export default function Header(){
         deleteUserDataInLocalStorage();
         navigate("/");
     }
+
+    function getUserFollows(){
+        const url = `https://projeto-17-linkr.herokuapp.com/user-follows`;
+        let token = window.localStorage.getItem("user_data");
+        token = token.substring(1, token.length - 1);
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const promise = axios.get(url, config);
+        promise.then((res) => {
+          setUserFollows([...res.data]);
+        });
+      }
 
     return ( 
         <>
