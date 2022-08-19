@@ -187,6 +187,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     promise.then(() => {
       toggleShowDeleteModal();
       setRefresh(refresh + 1);
+      reload();
     });
 
     promise.catch(() => {
@@ -322,6 +323,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     promise.then(() => {
       toggleShowConfirmRepost();
       setRefresh(refresh + 1);
+      reload();
     });
 
     promise.catch(() => {
@@ -358,6 +360,12 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     promise.then((res) => {
       setUserInfo({username: res.data[0].username, profilePicture: res.data[0].profilePicture});
     }); 
+  }
+
+  function reload(){
+    setTimeout(() => {
+      window.location.reload()
+    }, 1000);
   }
 
   return (
