@@ -24,6 +24,7 @@ export default function Timeline(){
     const [ pending, setPending ] = useState(false);
     const [ stop, setStop ] = useState(false);
     const [ loading, setLoading ] = useState(true);
+    const [ loadingNewPosts, setLoadingNewPosts ] = useState(false);
     const [ userInfo, setUserInfo] = useState({username: "", profilePicture: ""});
     const timer = 15000;
 
@@ -168,7 +169,7 @@ export default function Timeline(){
                         <Feed>
                             <InputBox img={userInfo.profilePicture} url={url} setUrl={setUrl} text={text} setText={setText} createPost={createPost} pending={pending}/>
                             {
-                                hasNewPosts ? <RefreshDiv number={newPosts.length - firstPosts.length} refresh={refresh} setRefresh={setRefresh} setReloadParameter={setReloadParameter}/> : <></>
+                                hasNewPosts ? <RefreshDiv number={newPosts.length - firstPosts.length} refresh={refresh} setRefresh={setRefresh} setReloadParameter={setReloadParameter} loadingNewPosts={loadingNewPosts} setLoadingNewPosts={setLoadingNewPosts}/> : <></>
                             }
                             {
                                 loading ? <ThreeDots
@@ -270,13 +271,23 @@ return(
 )
 }
 
-function RefreshDiv({number,refresh,setRefresh,setReloadParameter}){
+function RefreshDiv({number,refresh,setRefresh,setReloadParameter,loadingNewPosts,setLoadingNewPosts}){
     return (
         <RDiv onClick={()=>{
             setRefresh(refresh+1);
             setReloadParameter(0);
-            }} style={{display:"flex", justifyContent:"center"}}>
-            <p>{number} new posts, load more! <IoIosRefresh/></p> 
+            setLoadingNewPosts(true);
+            }} style={{display:"flex", justifyContent:"center",alignItems:"center"}}>
+                {
+                    loadingNewPosts ? <ThreeDots
+                    height="60"
+                    width="150"
+                    color='white'
+                    ariaLabel='loading'
+                    />
+                    :
+                    <p>{number} new posts, load more! <IoIosRefresh/></p> 
+                }
         </RDiv>
     )
 }

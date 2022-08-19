@@ -2,6 +2,8 @@ import styled from "styled-components";
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ThreeDots } from  'react-loader-spinner';
+
 import {
   useUserData,
   saveUserDataInLocalStorage,
@@ -46,7 +48,14 @@ export default function SignIn() {
         />
         <input placeholder="password" type="password" required value={credentials.password} onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
         />
-        {disable ? ( <ButtonDisabled>Log in</ButtonDisabled>) :
+        {disable ? ( <ButtonDisabled>
+                        <ThreeDots
+                          height="60"
+                          width="150"
+                          color='white'
+                          ariaLabel='loading'
+                        />
+                    </ButtonDisabled>) :
         (<button type="submit">Log in</button>)}
         <Link to="/signup">
           <p>First time? Create an account!</p>
