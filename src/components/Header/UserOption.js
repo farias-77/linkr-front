@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-export default function UserOption({ user, isLastOption, setShowOptions }){
+export default function UserOption({ user, isLastOption, setShowOptions, userFollows }){
     const navigate = useNavigate();
 
     function redirectUserPage(){
@@ -13,10 +13,14 @@ export default function UserOption({ user, isLastOption, setShowOptions }){
         return;
     }
     
+    function returnUsernameComplement(){
+        return (userFollows.find(userFollowed => userFollowed.followedId === user.id) ? <span>• following</span>  : <span></span> )
+    }
+
     return (
         <Container onClick={redirectUserPage} border={isLastOption ? "0px 0px 8px 8px" : "0px 0px 0px 0px" }>
             <img src={user.profilePicture} alt="profile" />
-            <h4>{user.username}</h4>
+            <h4>{user.username} {returnUsernameComplement()}</h4>
         </Container>
     )
 }
@@ -58,4 +62,14 @@ const Container = styled.div`
     > div{
         margin-left: 7%;
     }
+
+    span{
+        font-family: 'Lato';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 23px;
+        color: #C5C5C5;
+  }
 `;
+
