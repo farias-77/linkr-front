@@ -27,6 +27,8 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
   const [displayConfirmRepost, setDisplayConfirmRepost] = useState("display: none;");
   const [reposts, setReposts] = useState();
   const [whoReposted, setWhoReposted] = useState("");
+  const [userFollows, setUserFollows] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
     if(!post.repostId){
@@ -44,7 +46,9 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     const promise = axios.get(url, config);
     promise.then((res) => {
       setWhoReposted(res.data[0].username);
-    });    
+    });   
+    
+    
   }, []);
 
   useEffect(() => {
@@ -79,6 +83,8 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     promise3.then((res) => {
       setReposts(res.data.length);
     });
+
+    getUserFollows();
 
   }, [refresh, whoReposted]);
 
@@ -239,6 +245,8 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
     } else {
       setShowComments(true);
     }
+
+    getUserInfo();
   }
 
   function returnEmptyComments() {
@@ -251,13 +259,13 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
   }
 
   function returnComments() {
-    return comments.map((comment, index) => {
+      return comments.map((comment, index) => {
       return (
         <>
           <Comment key={index}>
             <img src={comment.profilePicture} alt="profile" />
             <div>
-              <p>{comment.username}</p>
+              <p>{comment.username} {returnUsernameComplement(comment)}</p>
               <p>{comment.comment}</p>
             </div>
           </Comment>
@@ -265,6 +273,14 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
         </>
       );
     });
+  }
+
+  function returnUsernameComplement(comment){
+    if(comment.username !== user.username){
+      return (userFollows.find(user => user.followedId === comment.userId) ? <span>• following</span>  : <span></span> )
+    }else{
+      return <span>• post’s author</span>
+    }
   }
 
   function sendComment() {
@@ -312,6 +328,36 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
       toggleShowConfirmRepost();
       alert("Não foi possível repostar o post :(");
     });
+  }
+
+  function getUserFollows(){
+    const url = `https://projeto-17-linkr.herokuapp.com/user-follows`;
+    let token = window.localStorage.getItem("user_data");
+    token = token.substring(1, token.length - 1);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const promise = axios.get(url, config);
+    promise.then((res) => {
+      setUserFollows([...res.data]);
+    });
+  }
+
+  function getUserInfo(){
+    const url = `https://projeto-17-linkr.herokuapp.com/userInfo`;
+    let token = window.localStorage.getItem("user_data");
+    token = token.substring(1, token.length - 1);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const promise = axios.get(url, config);
+    promise.then((res) => {
+      setUserInfo({username: res.data[0].username, profilePicture: res.data[0].profilePicture});
+    }); 
   }
 
   return (
@@ -391,7 +437,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
         >
           {comments.length === 0 ? returnEmptyComments() : returnComments()}
           <CommentInput>
-            <img src={user.profilePicture} alt="user profile" />
+            <img src={userInfo.profilePicture ? userInfo.profilePicture : ""} alt="loading..." />
             <input
               placeholder="write a comment..."
               value={commentInput}
@@ -854,6 +900,16 @@ const Comment = styled.div`
       line-height: 17px;
       color: #acacac;
     }
+  }
+
+  span{
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+
+    color: #565656;
   }
 `;
 
