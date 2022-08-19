@@ -213,7 +213,7 @@ return(
                 style={{display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}
                 >
                 {
-                    posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                    posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>No posts found from your friends</p> :
                     posts.map((value,index)=>
                     <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)
                 }
@@ -221,7 +221,7 @@ return(
                 :
                 <>
                     {
-                        posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>There are no posts yet.</p> :
+                        posts.length === 0 ? <p style={{fontSize:"24px", color:"#ffffff", textAlign:"center"}}>No posts found from your friends</p> :
                         <>
                         {posts.map((value,index)=>
                             <PostCard key={index} user={{username: value.username, profilePicture: value.profilePicture}} post={value} refresh={refresh} setRefresh={setRefresh}/>)}
