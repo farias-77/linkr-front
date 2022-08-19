@@ -99,7 +99,6 @@ export default function UserPage(){
 }
 
 function Posts({posts, userInfo, refresh, setRefresh, getMorePosts, stop}){
-    console.log(userInfo)
     const scrollTop = () =>{
         window.scrollTo({top: 0, behavior: 'smooth'});
      };
