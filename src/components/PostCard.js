@@ -289,7 +289,7 @@ export default function PostCard({ user, post, refresh, setRefresh }) {
   }
 
   function repostPost() {
-    const url = `https://projeto-17-linkr.herokuapp.com/repost/${post.postId}`;
+    const url = `https://projeto-17-linkr.herokuapp.com/repost/${(whoReposted ? post.repostId : post.postId)}`;
     let token = window.localStorage.getItem("user_data");
     token = token.substring(1, token.length - 1);
     const body = {
